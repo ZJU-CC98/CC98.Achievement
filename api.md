@@ -15,4 +15,4 @@ CC98 成就系统支持第三方应用接入。CC98 成就系统将负责记录�
 
 ## API 列表
 
-要查看 CC98 成就系统 API 支持的列表，请[单击此处](https://achievement.cc98.org/swagger/index.html)。
+要查看 CC98 成就系统支持的 API 列表，请[单击此处](https://achievement.cc98.org/swagger/index.html)。
