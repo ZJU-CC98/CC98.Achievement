@@ -1,0 +1,54 @@
+﻿@using Sakura.AspNetCore.Localization
+@model CategorySummaryInfo
+@inject IDynamicViewLocalizer Localizer
+@{
+	var categoryName = (string?)ViewBag.CategoryName;
+	var isActive = categoryName == Model.CodeName;
+	var userInfo = Model as CategoryUserSummaryInfo;
+}
+
+<div class="card mb-3" asp-conditional-class-border-primary="@isActive">
+
+	@*隐藏的链接，用于单击卡片产生效果*@
+	<a class="stretched-link" asp-controller="Achievement" asp-action="Index" asp-route-category="@Model.CodeName"></a>
+
+	<div class="card-header" asp-conditional-class-text-white="@isActive" asp-conditional-class-bg-primary="@isActive">
+
+		<div class="d-flex justify-content-between align-items-center">
+			<span>@Model.DisplayName</span>
+
+			@*显示成就总数，如果当前用户登录，则在下面以进度条显示，此处隐藏*@
+			@if (userInfo == null)
+			{
+				<span class="badge bg-secondary">@Model.AchievementCount</span>
+			}
+
+		</div>
+
+	</div>
+
+	@if (userInfo != null)
+	{
+		<div class="card-body">
+			<strong>
+				<span>@Localizer.Html.FinishedCount(userInfo.UserFinishedCount, userInfo.AchievementCount)</span>
+				@if (userInfo.UserSpecialCount != 0)
+				{
+					<span class="text-success" title="@Localizer.Html.SpecialCountHelp">@Localizer.Html.SpecialCount(userInfo.UserSpecialCount)</span>
+				}
+			</strong>
+
+			<div class="progress">
+				<div class="progress-bar bg-success" role="progressbar"></div>
+			</div>
+
+		</div>
+	}
+
+	@if (Model.UserCount > 0)
+	{
+		<div class="card-footer">
+			<small class="text-muted">@Localizer.Html.UserJoined(Model.UserCount)</small>
+		</div>
+	}
+</div>

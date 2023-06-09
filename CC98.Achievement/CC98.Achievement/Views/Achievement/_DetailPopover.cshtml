@@ -1,0 +1,23 @@
+﻿@model AchievementItem
+
+@if (!string.IsNullOrEmpty(Model.Description))
+{
+	<div class="card-text">@Model.Description</div>
+	<hr />
+}
+
+@if (!string.IsNullOrEmpty(Model.Hint))
+{
+	<strong>提示</strong>
+	<div class="card-text">@Model.Hint</div>
+	<hr />
+}
+
+@if (!string.IsNullOrEmpty(Model.Reward))
+{
+	<strong>奖励</strong>
+	<div class="card-text">@Model.Reward</div>
+	<hr />
+}
+
+<div class="card-text"><code>@Model.CodeName</code></div>

@@ -1,0 +1,20 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using Sakura.AspNetCore.Localization
+@model IEnumerable<CategorySummaryInfo>
+@inject IDynamicViewLocalizer Localizer
+@{
+	var defaultItem =
+		new CategorySummaryInfo
+				{
+					CodeName = null,
+					DisplayName = "所有成就",
+					AchievementCount = Model.Sum(i => i.AchievementCount),
+					UserCount = 0
+				};
+}
+
+
+@foreach (var item in Model.Prepend(defaultItem))
+{
+	<partial name="_CategoryItemPartial" model="@item" />
+}

@@ -1,0 +1,9 @@
+﻿@{
+	ViewBag.Title = "系统管理";
+}
+
+<div class="alert alert-warning">本页面的操作对系统有较大影响，请谨慎使用！</div>
+
+<form asp-controller="Manage" asp-action="RegisterItems" method="post" asp-antiforgery="true">
+	<button type="submit" class="btn btn-outline-secondary">注册成就系统自身成就</button>
+</form>

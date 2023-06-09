@@ -1,0 +1,27 @@
+﻿@using System.Globalization
+@model AchievementCategory
+@{
+	ViewBag.Title = string.Format(CultureInfo.CurrentUICulture, "编辑分类 - {0}", Model.DisplayName);
+	ViewBag.IsEdit = true;
+}
+
+<div class="alert alert-info">如果你希望修改分类标识，请删除当前分类并重新创建新项。</div>
+
+<form asp-controller="Category" asp-action="Edit" method="post" asp-antiforgery="true">
+
+	<input type="hidden" asp-for="CodeName" />
+
+	<div class="row justify-content-center">
+		<div class="col-12 col-sm-9 col-md-6">
+
+			<partial name="_EditPartial" />
+
+
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+			<button type="submit" class="btn btn-primary">更改分类</button>
+			<button type="reset" class="btn btn-outline-secondary">清空填写</button>
+
+		</div>
+	</div>
+</form>

@@ -1,0 +1,107 @@
+﻿@using CC98
+@model AchievementAndUserRecordInfo
+@inject AppSettingService<SystemSetting> AppSettingService
+@{
+	var contentElementId = $"popover-content-{Model.Item.CategoryName}-{Model.Item.CodeName}";
+
+	var borderClasses = new Dictionary<string, bool>
+			{
+				["border-success"] = Model.CompleteState == AchievementCompleteState.Completed,
+				["border-primary"] = Model.CompleteState == AchievementCompleteState.Progress
+			};
+
+	var footerClasses = new Dictionary<string, bool>
+			{
+				["bg-success text-white"] = Model.CompleteState == AchievementCompleteState.Completed,
+				//["bg-primary text-white"] = Model.CompleteState == AchievementCompleteState.Progress
+			};
+}
+<div class="col mb-3">
+	<div class="card h-100" asp-conditional-classes="borderClasses" data-bs-toggle="popover" data-bs-title="@Model.Item.DisplayName" data-bs-html="true" data-bs-trigger="hover" data-bs-content-id="@contentElementId">
+
+		<a asp-controller="Achievement" asp-action="Detail" asp-route-category="@Model.Item.CategoryName" asp-route-name="@Model.Item.CodeName" class="stretched-link"></a>
+
+		<div class="card-body p-0">
+
+			<div class="d-flex">
+				<div class="flex-shrink-0">
+					<img src="@GetRealIconUri(Model.Item)" class="m-2" style="max-width: 64px; max-height: 64px;" alt="成就图标" />
+				</div>
+				<div class="flex-grow-1">
+					<div class="d-flex justify-content-between align-items-center m-2">
+						<h5 class="m-0"><strong>@Model.Item.DisplayName</strong></h5>
+
+						@switch (Model.Item.State)
+						{
+							case AchievementState.Normal:
+								break;
+							case AchievementState.Hidden:
+								<span class="badge bg-warning help" title="这是一个隐藏成就。没有获得这个成就的用户将无法看到它的详细信息。">隐藏</span>
+								break;
+							case AchievementState.Special:
+								<span class="badge bg-danger help" title="这是一个特殊成就。没有获得这个成就的用户将无法在列表中看到它。">特殊</span>
+								break;
+						}
+
+					</div>
+					<hr class="m-0" />
+					<div class="m-2">@Model.Item.Description</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="card-footer d-flex" asp-conditional-classes="@footerClasses">
+			@if (Model.Record != null)
+			{
+				if (Model.Record.IsCompleted)
+				{
+					<small>
+						<i class="bi-check-circle"></i>
+						<span>获得于 @Model.Record.Time.ToString("g")</span>
+					</small>
+				}
+				else
+				{
+					<div class="d-flex flex-grow-1 justify-content-between align-items-center">
+						<small class="flex-grow-0">
+							<span class="text-primary">正在获得</span>
+						</small>
+						<div class="progress bg-white flex-grow-1 ms-2">
+							<div class="progress-bar bg-primary text-white" role="progressbar" data-toggle="progress" data-now-value="@Model.Record.CurrentValue" data-max-value="@Model.Item.MaxValue">
+								<span>@($"{Model.Record.CurrentValue} / {Model.Item.MaxValue}")</span>
+							</div>
+						</div>
+					</div>
+
+
+
+
+				}
+			}
+			else
+			{
+				<small class="text-muted">尚未获得</small>
+			}
+
+
+		</div>
+
+
+	</div>
+
+	@*弹出框内容，隐藏*@
+	<div class="visually-hidden">
+		<div id="@contentElementId">
+			<partial name="_DetailPopover" model="@Model.Item" />
+		</div>
+	</div>
+</div>
+
+@functions
+{
+	string GetRealIconUri(AchievementItem item)
+	{
+		return item.IconUri ?? AppSettingService.Current.DefaultIconUri;
+	}
+}

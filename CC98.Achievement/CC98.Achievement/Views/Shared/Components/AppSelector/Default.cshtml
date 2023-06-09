@@ -1,0 +1,8 @@
+﻿@model IEnumerable<AchievementCategory>
+@{
+	var aspFor = (ModelExpression) ViewBag.AspFor;
+	var readOnly = (bool) ViewBag.ReadOnly;
+	var selectList = new SelectList(Model, nameof(AchievementCategory.CodeName), nameof(AchievementCategory.DisplayName), aspFor.Model);
+}
+
+<select asp-items="@selectList" name="@aspFor.Name" class="form-control" disabled="@readOnly" asp-option-label="(请选择一个分类)"></select>

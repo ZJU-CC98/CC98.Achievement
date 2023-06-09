@@ -1,0 +1,32 @@
+﻿@model AchievementRecord
+@{
+	var categoryName = (string)ViewBag.CategoryName;
+	var achievementName = (string)ViewBag.AchievementName;
+}
+
+<form asp-controller="Achievement" asp-action="AddRecord" method="post" asp-antiforgery="true">
+
+	<input type="hidden" asp-for="CategoryName" value="@categoryName" />
+	<input type="hidden" asp-for="AchievementName" value="@achievementName" />
+
+	<div class="modal-header">
+		<h5 class="modal-title">添加用户记录</h5>
+		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="关闭"></button>
+	</div>
+
+	<div class="modal-body">
+
+		<partial name="_RecordPartial" />
+
+	</div>
+
+	<div class="modal-footer">
+
+		<div class="text-danger" asp-validation-summary="ModelOnly"></div>
+
+		<button type="submit" class="btn btn-primary">确认添加</button>
+		<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+	</div>
+
+</form>
+

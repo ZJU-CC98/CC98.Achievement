@@ -1,0 +1,18 @@
+﻿@{
+	Layout = "_Layout";
+	ViewBag.PageTitle ??= ViewBag.Title;
+}
+
+<div asp-message-list="AlertDialogClosable" asp-message-list-use-two-line="true"></div>
+
+<h1 class="text-center lead">@ViewBag.Title</h1>
+<hr />
+@RenderBody()
+
+@section Header{
+	@await RenderSectionAsync("Header", false)
+}
+
+@section Scripts{
+	@await RenderSectionAsync("Scripts", false)
+}

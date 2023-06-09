@@ -1,0 +1,119 @@
+﻿@model AchievementItem
+@{
+	var isEdit = (bool?)ViewBag.IsEdit ?? false;
+}
+
+
+<div class="card mb-3">
+	<div class="card-header">基本信息</div>
+	<div class="card-body">
+
+		<div class="alert alert-warning">请注意，由于<q>成就分类</q>和<q>成就标识</q>将作为后台成就项的区分标识，因此这两项信息只能在创建时设定，之后将无法修改。</div>
+
+		<div class="mb-3">
+			<label asp-for="CategoryName" class="form-label">成就分类</label>
+			<vc:app-selector asp-for="CategoryName" read-only="@isEdit"></vc:app-selector>
+			<span asp-validation-for="CategoryName" class="text-danger"></span>
+			<div class="form-text">该成就所属的分类。这将影响成就的显示分组。此外，由于分类和应用关联，该设置也将影响可颁发成就的应用来源。</div>
+		</div>
+
+		<div class="mb-3">
+			<label asp-for="CodeName" class="form-label">成就标识</label>
+			<input type="text" asp-for="CodeName" class="form-control" readonly="@isEdit" disabled="@isEdit" />
+			<span asp-validation-for="CodeName" class="text-danger"></span>
+			<div class="form-text">该成就项的标识。第三方应用推送成就信息时，将使用该字段标识本成就。用户通常不会看到标识内容。处于兼容和规范性考虑，建议使用英文字母、数字和横线来定义标识。</div>
+		</div>
+
+		@if (isEdit)
+		{
+			<input type="hidden" asp-for="CategoryName" />
+			<input type="hidden" asp-for="CodeName" />
+		}
+
+		<hr />
+
+		<div class="mb-3">
+			<label asp-for="DisplayName" class="form-label">成就名称</label>
+			<input type="text" asp-for="DisplayName" class="form-control" />
+			<span asp-validation-for="DisplayName" class="text-danger"></span>
+			<div class="form-text">该成就的名称。用户可以在成就系统界面中看到该名称。</div>
+		</div>
+
+		<div class="mb-3">
+			<label asp-for="Description" class="form-label">成就描述</label>
+			<textarea asp-for="Description" class="form-control" rows="3"></textarea>
+			<span asp-validation-for="Description" class="text-danger"></span>
+			<div class="form-text">该成就的描述。用户可以在成就系统界面中看到该描述。尽管描述不是必需的，还是建议你为每个成就都添加描述信息。</div>
+		</div>
+
+		<div class="mb-3">
+			<label asp-for="IconUri" class="form-label">成就图标</label>
+			<input asp-for="IconUri" type="url" class="form-control" rows="3" placeholder="使用默认图标" />
+			<span asp-validation-for="IconUri" class="text-danger"></span>
+			<div class="form-text">该成就的图标。用户可以在成就系统界面中看到该图标。如果不使用图标，则该成就将使用系统提供的默认图标。从用户体验角度而言，建议你为每个成就都提供辨识度高的图标。</div>
+		</div>
+
+		<hr />
+		
+		<div class="mb-3">
+			<label asp-for="Hint" class="form-label">成就提示</label>
+			<textarea asp-for="Hint" class="form-control" rows="3"></textarea>
+			<span asp-validation-for="Hint" class="text-danger"></span>
+			<div class="form-text">用于提示用户如何获取这项成就的相关额外信息。这个信息是可选的。如果提供了提示，它将会显示在成就的详细信息界面。</div>
+		</div>
+		
+		<div class="mb-3">
+			<label asp-for="Reward" class="form-label">成就奖励</label>
+			<textarea asp-for="Reward" class="form-control" rows="3"></textarea>
+			<span asp-validation-for="Reward" class="text-danger"></span>
+			<div class="form-text">当用户获取该成就后，将获得的奖励内容的说明。奖励的实际颁发和管理由相关应用自行负责，成就系统自身不使用该信息，对其内容也没有格式要求。</div>
+		</div>
+
+	</div>
+
+</div>
+
+<div class="card mb-3">
+	<div class="card-header">获取信息</div>
+	<div class="card-body">
+
+		<div class="mb-3">
+			<label asp-for="State" class="form-label">成就类型</label>
+
+			<div class="form-check">
+				<label class="form-check-label">
+					<input type="radio" asp-for="State" value="@AchievementState.Normal" /> 普通成就
+				</label>
+				<div class="form-text">用户尚未获取该成就时也能在成就系统一览中看到该成就的详细信息，但未获取时图标为灰色。该成就将计入成就数量统计。</div>
+			</div>
+
+
+			<div class="form-check">
+				<label class="form-check-label">
+					<input type="radio" asp-for="State" value="@AchievementState.Hidden" /> 隐藏成就
+				</label>
+				<div class="form-text">用户尚未获取该成就时，在成就系统一览中只能看到<q>隐藏的成就</q>字样，无法获取详细信息；获取后可看到相信信息。该成就将计入成就数量统计。</div>
+			</div>
+
+
+			<div class="form-check">
+				<label class="form-check-label">
+					<input type="radio" asp-for="State" value="@AchievementState.Special" /> 特殊成就
+				</label>
+				<div class="form-text">用户尚未获取该成就时无法在成就系统中看到任何信息，获取后可看到成就的详细信息。该成就不会计入成就的数量统计。</div>
+			</div>
+		</div>
+
+		<span class="text-danger" asp-validation-for="State"></span>
+
+		<hr />
+
+		<div class="mb-3">
+			<label asp-for="MaxValue" class="form-label">成就计数值</label>
+			<input type="number" step="1" min="0" asp-for="MaxValue" placeholder="不启用成就计数" class="form-control" />
+			<span asp-validation-for="MaxValue" class="text-danger"></span>
+			<div class="form-text">如果启用成就计数，则表示该成就是一个计数类成就，用户通常需要满足条件一定次数（或数量）才能完成。如果该成就为<q>普通成就</q>，用户还可在成就界面上看到当前自己的进度值。</div>
+		</div>
+
+	</div>
+</div>

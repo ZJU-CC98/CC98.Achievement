@@ -1,0 +1,22 @@
+﻿@model AchievementCategory
+@{
+	ViewBag.Title = "创建分类";
+}
+
+<div class="alert alert-info">本页面用于为成就系统注册分类及其关联的业务应用信息。注意：第三方应用必须首先在 <a class="alert-link" href="https://openid.cc98.org">CC98 登录中心</a>中进行注册，才能正确授权并使用成就系统。成就系统本身不负责第三方应用的相关功能管理。</div>
+
+<form asp-controller="Category" asp-action="Create" method="post" asp-antiforgery="true">
+	<div class="row justify-content-center">
+		<div class="col-12 col-sm-9 col-md-6">
+
+			<partial name="_EditPartial" />
+
+
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+			<button type="submit" class="btn btn-primary">创建分类</button>
+			<button type="reset" class="btn btn-outline-secondary">清空填写</button>
+
+		</div>
+	</div>
+</form>

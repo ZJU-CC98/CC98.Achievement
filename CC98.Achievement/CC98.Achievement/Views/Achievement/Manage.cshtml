@@ -1,0 +1,58 @@
+﻿@using CC98.Achievement.Controllers
+@model IPagedList<AchievementItem>
+
+@if (Model.Any())
+{
+	<table class="table table-hover table-striped align-middle">
+		<thead>
+			<tr>
+				<th>名称</th>
+				<th>标识</th>
+				<th>分类</th>
+				<th>类型</th>
+				<th>操作</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model)
+			{
+				<tr>
+					<th>@item.DisplayName</th>
+					<td><code>@item.CodeName</code></td>
+					<td>
+						<span>@item.Category.DisplayName</span>
+					</td>
+					<td>
+						@switch (item.State)
+						{
+							case AchievementState.Normal:
+								<span class="text-success">普通</span>
+								break;
+							case AchievementState.Hidden:
+								<span class="text-warning">隐藏</span>
+								break;
+							case AchievementState.Special:
+								<span class="text-danger">特殊</span>
+								break;
+						}
+					</td>
+					<td>
+						<div class="btn-group btn-group-sm">
+							<a asp-controller="Achievement" asp-action="Edit" asp-route-category="@item.CategoryName" asp-route-name="@item.CodeName" class="btn btn-outline-secondary">编辑</a>
+							<button type="button" class="btn btn-danger">删除</button>
+						</div>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+
+	<pager />
+}
+else
+{
+	<div class="text-center text-muted">目前系统中还没有任何成就</div>
+}
+
+<hr />
+<a asp-controller="Achievement" asp-action="Create" class="btn btn-primary">创建新成就</a>

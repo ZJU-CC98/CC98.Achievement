@@ -1,0 +1,41 @@
+﻿@model AchievementCategory
+@{
+	var isEdit = (bool?)ViewBag.IsEdit ?? false;
+}
+
+<div class="mb-3">
+	<label class="form-label" asp-for="CodeName">分类标识</label>
+	<input class="form-control" asp-for="CodeName" type="text" readonly="@isEdit" disabled="@isEdit" />
+	<span class="text-danger" asp-validation-for="CodeName"></span>
+	<div class="form-text">分类的标识。该标识也作为成就项的前缀，用于区分不同的成就来源。请使用英文字母、数字和横线来定义标识。注意：该字段一旦创建将无法修改。</div>
+</div>
+
+@if (isEdit)
+{
+	<input type="hidden" asp-for="CodeName" />
+}
+
+<div class="mb-3">
+	<label class="form-label" asp-for="DisplayName">分类名称</label>
+	<input class="form-control" asp-for="DisplayName" type="text" />
+	<span class="text-danger" asp-validation-for="DisplayName"></span>
+	<div class="form-text">分类的显示名称。用户将在成就系统浏览页面中看到该应用的名称。如果该分类关联到特定应用，则通常应该和应用的实际名称保持一致。</div>
+</div>
+
+<hr />
+
+<div class="mb-3">
+	<label class="form-label" asp-for="AppId">应用授权标识</label>
+	<input class="form-control" asp-for="AppId" type="text" />
+	<span class="text-danger" asp-validation-for="AppId"></span>
+	<div class="form-text">该应用在 <a target="_blank" href="https://openid.cc98.org">CC98 登录中心</a>中注册的标识。在业务应用申请登录中心授权后，成就系统将使用该标识确认业务应用的身份。</div>
+</div>
+
+<hr />
+
+<div class="mb-3">
+	<label class="form-label" asp-for="UserCount">分类参与人数</label>
+	<input class="form-control" asp-for="UserCount" type="number" min="0" step="1" />
+	<span class="text-danger" asp-validation-for="UserCount"></span>
+	<div class="form-text">该分类的参与人数，用于计算该类别的成就提供成就达成人数比例。如果设置为<code>0</code>则将禁用计算人数比例功能。由第三方应用接管的分类可通过 API 定时修改该数据。</div>
+</div>
