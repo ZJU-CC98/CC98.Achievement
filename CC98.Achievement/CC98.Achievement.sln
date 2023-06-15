@@ -7,13 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CC98.Achievement", "CC98.Ac
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CC98.Achievement.AppManagement", "CC98.Achievement.AppManagement\CC98.Achievement.AppManagement.csproj", "{36E26338-CC25-4460-A8FA-59A1EB7E0385}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CC98.Achievement.Shared", "CC98.Achievement.Shared\CC98.Achievement.Shared.csproj", "{11F54BBB-948A-4826-BFD0-492A87AB625F}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "解决方案项", "解决方案项", "{BDEA3725-4AE8-4D68-BA82-157640DE28CF}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
 		nuget.config = nuget.config
 	EndProjectSection
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CC98.Achievement.Shared", "CC98.Achievement.Shared\CC98.Achievement.Shared.shproj", "{3335FF0A-C336-4BDC-A834-E3F875BD4BFE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,15 +29,15 @@ Global
 		{36E26338-CC25-4460-A8FA-59A1EB7E0385}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36E26338-CC25-4460-A8FA-59A1EB7E0385}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{36E26338-CC25-4460-A8FA-59A1EB7E0385}.Release|Any CPU.Build.0 = Release|Any CPU
-		{11F54BBB-948A-4826-BFD0-492A87AB625F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{11F54BBB-948A-4826-BFD0-492A87AB625F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{11F54BBB-948A-4826-BFD0-492A87AB625F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{11F54BBB-948A-4826-BFD0-492A87AB625F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {ADCBFC58-612E-46DB-AC21-081157F2930D}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		CC98.Achievement.Shared\CC98.Achievement.Shared.projitems*{3335ff0a-c336-4bdc-a834-e3f875bd4bfe}*SharedItemsImports = 13
+		CC98.Achievement.Shared\CC98.Achievement.Shared.projitems*{36e26338-cc25-4460-a8fa-59a1eb7e0385}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

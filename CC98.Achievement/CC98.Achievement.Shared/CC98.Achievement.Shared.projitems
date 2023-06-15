@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>3335ff0a-c336-4bdc-a834-e3f875bd4bfe</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>CC98.Achievement.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)AchievementBaseInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AchievementItemRegisterInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AchievementRegisterInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AchievementRegisterOptions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AchievementRegisterResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AchievementScopes.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AchievementState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CategoryInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RecordInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UserAchievementInfo.cs" />
+  </ItemGroup>
+</Project>
