@@ -4,7 +4,7 @@
     <TargetFramework>net7</TargetFramework>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Description>为 CC98 应用程序提供成就支持。</Description>
+    <Description>为 CC98 应用程序发布成就信息提供后端支持。</Description>
   </PropertyGroup>
 
   <ItemGroup>
