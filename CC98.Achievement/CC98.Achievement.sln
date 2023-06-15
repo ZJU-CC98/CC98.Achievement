@@ -13,8 +13,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "解决方案项", "解决�
 		nuget.config = nuget.config
 	EndProjectSection
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CC98.Achievement.Shared", "CC98.Achievement.Shared\CC98.Achievement.Shared.shproj", "{3335FF0A-C336-4BDC-A834-E3F875BD4BFE}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,7 +35,6 @@ Global
 		SolutionGuid = {ADCBFC58-612E-46DB-AC21-081157F2930D}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		CC98.Achievement.Shared\CC98.Achievement.Shared.projitems*{3335ff0a-c336-4bdc-a834-e3f875bd4bfe}*SharedItemsImports = 13
 		CC98.Achievement.Shared\CC98.Achievement.Shared.projitems*{36e26338-cc25-4460-a8fa-59a1eb7e0385}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

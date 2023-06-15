@@ -19,6 +19,4 @@
     <ProjectReference Include="..\CC98.Achievement.Shared\CC98.Achievement.Shared.csproj" />
   </ItemGroup>
 
-  <Import Project="..\CC98.Achievement.Shared\CC98.Achievement.Shared.projitems" Label="Shared" />
-
 </Project>
