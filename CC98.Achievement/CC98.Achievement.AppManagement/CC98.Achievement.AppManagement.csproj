@@ -15,8 +15,4 @@
     <PackageReference Include="System.Composition" Version="7.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\CC98.Achievement.Shared\CC98.Achievement.Shared.csproj" />
-  </ItemGroup>
-
 </Project>
