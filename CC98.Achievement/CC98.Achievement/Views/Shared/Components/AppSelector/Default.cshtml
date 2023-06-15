@@ -5,4 +5,4 @@
 	var selectList = new SelectList(Model, nameof(AchievementCategory.CodeName), nameof(AchievementCategory.DisplayName), aspFor.Model);
 }
 
-<select asp-items="@selectList" name="@aspFor.Name" class="form-control" disabled="@readOnly" asp-option-label="(请选择一个分类)"></select>
+<select asp-items="@selectList" name="@Html.Name(aspFor.Name)" class="form-control" disabled="@readOnly" asp-option-label="(请选择一个分类)"></select>

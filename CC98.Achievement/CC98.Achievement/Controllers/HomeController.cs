@@ -3,18 +3,17 @@
 using Microsoft.AspNetCore.Mvc;
 
 using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc.Localization;
-using Microsoft.Extensions.Localization;
+
 
 namespace CC98.Achievement.Controllers;
 
 public class HomeController : Controller
 {
-	private readonly ILogger<HomeController> _logger;
+	public ILogger<HomeController> Logger { get; }
 
 	public HomeController(ILogger<HomeController> logger)
 	{
-		_logger = logger;
+		Logger = logger;
 	}
 
 	public IActionResult Index()

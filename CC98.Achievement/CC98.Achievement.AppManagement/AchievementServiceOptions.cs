@@ -18,10 +18,10 @@ public class AchievementServiceOptions
 	/// <summary>
 	/// 客户端身份授权服务机构地址。
 	/// </summary>
-	public string? Authority { get; set; } = AchievementServiceDefaults.Authority;
+	public string Authority { get; set; } = AchievementServiceDefaults.Authority;
 
 	/// <summary>
 	/// API 操作的 URL 根地址。
 	/// </summary>
-	public string? ApiBaseUri { get; set; } = AchievementServiceDefaults.ApiBaseUri;
+	public string ApiBaseUri { get; set; } = AchievementServiceDefaults.ApiBaseUri;
 }

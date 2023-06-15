@@ -23,11 +23,15 @@
 			<div class="card mt-3">
 				<div class="card-header">成就信息</div>
 
-				<partial name="_EditPartial" />
+				<div class="card-body">
+					<partial name="_EditPartial" />
+					<div class="text-danger" asp-validation-summary="ModelOnly"></div>
+				</div>
 
-				<div class="text-danger" asp-validation-summary="ModelOnly"></div>
-				<button type="submit" class="btn btn-primary">修改成就</button>
-				<button type="reset" class="btn btn-outline-secondary">撤销更改</button>
+				<div class="card-footer">
+					<button type="submit" class="btn btn-primary">修改成就</button>
+					<button type="reset" class="btn btn-outline-secondary">撤销更改</button>
+				</div>
 
 			</div>
 

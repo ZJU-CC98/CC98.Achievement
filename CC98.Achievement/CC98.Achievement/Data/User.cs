@@ -22,7 +22,7 @@ public class User
 	[Required]
 	[StringLength(50)]
 	[Column("UserName")]
-	public string Name { get; set; }
+	public required string Name { get; set; }
 
 	/// <summary>
 	/// 用户的头像 URL 地址。
@@ -30,7 +30,7 @@ public class User
 	[Column("face")]
 	[Required]
 	[Url]
-	public string PortraitUri { get; set; }
+	public required string PortraitUri { get; set; }
 
 	/// <summary>
 	/// 用户的性别。

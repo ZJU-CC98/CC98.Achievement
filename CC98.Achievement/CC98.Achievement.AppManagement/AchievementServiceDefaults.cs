@@ -12,7 +12,6 @@ public static class AchievementServiceDefaults
 
 	/// <summary>
 	/// 提供 <see cref="AchievementServiceOptions.ApiBaseUri"/> 的默认值。该字段为常量。
-	/// </summary>"/> 的默认值。该字段为常量。
 	/// </summary>
 	public const string ApiBaseUri = "https://achievement.cc98.org/api/";
 }

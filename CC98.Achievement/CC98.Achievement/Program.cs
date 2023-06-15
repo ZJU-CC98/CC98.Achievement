@@ -131,8 +131,11 @@ builder.Services.AddSwaggerGen(options =>
 	{
 		Description = "使用 <a href\"https://openid.cc98.org\">CC98 登录系统</a>执行 API 身份授权。",
 		Type = SecuritySchemeType.OpenIdConnect,
-		OpenIdConnectUrl = new(new(builder.Configuration["Authentication:IdentityServer:Authority"]),
-			OidcConstants.Discovery.DiscoveryEndpoint)
+		OpenIdConnectUrl =
+			new(
+				new(builder.Configuration["Authentication:IdentityServer:Authority"] ??
+					throw new InvalidOperationException("未配置 IdentityServer 授权机构地址。")),
+				OidcConstants.Discovery.DiscoveryEndpoint)
 	});
 
 	var xmlFileList = new List<string>();

@@ -54,14 +54,14 @@
 		</div>
 
 		<hr />
-		
+
 		<div class="mb-3">
 			<label asp-for="Hint" class="form-label">成就提示</label>
 			<textarea asp-for="Hint" class="form-control" rows="3"></textarea>
 			<span asp-validation-for="Hint" class="text-danger"></span>
 			<div class="form-text">用于提示用户如何获取这项成就的相关额外信息。这个信息是可选的。如果提供了提示，它将会显示在成就的详细信息界面。</div>
 		</div>
-		
+
 		<div class="mb-3">
 			<label asp-for="Reward" class="form-label">成就奖励</label>
 			<textarea asp-for="Reward" class="form-control" rows="3"></textarea>
@@ -82,7 +82,7 @@
 
 			<div class="form-check">
 				<label class="form-check-label">
-					<input type="radio" asp-for="State" value="@AchievementState.Normal" /> 普通成就
+					<input class="form-check-input" type="radio" asp-for="State" value="@AchievementState.Normal" /> 普通成就
 				</label>
 				<div class="form-text">用户尚未获取该成就时也能在成就系统一览中看到该成就的详细信息，但未获取时图标为灰色。该成就将计入成就数量统计。</div>
 			</div>
@@ -90,7 +90,7 @@
 
 			<div class="form-check">
 				<label class="form-check-label">
-					<input type="radio" asp-for="State" value="@AchievementState.Hidden" /> 隐藏成就
+					<input class="form-check-input" type="radio" asp-for="State" value="@AchievementState.Hidden" /> 隐藏成就
 				</label>
 				<div class="form-text">用户尚未获取该成就时，在成就系统一览中只能看到<q>隐藏的成就</q>字样，无法获取详细信息；获取后可看到相信信息。该成就将计入成就数量统计。</div>
 			</div>
@@ -98,13 +98,24 @@
 
 			<div class="form-check">
 				<label class="form-check-label">
-					<input type="radio" asp-for="State" value="@AchievementState.Special" /> 特殊成就
+					<input class="form-check-input" type="radio" asp-for="State" value="@AchievementState.Special" /> 特殊成就
 				</label>
 				<div class="form-text">用户尚未获取该成就时无法在成就系统中看到任何信息，获取后可看到成就的详细信息。该成就不会计入成就的数量统计。</div>
 			</div>
 		</div>
 
 		<span class="text-danger" asp-validation-for="State"></span>
+
+		<hr />
+
+		<div class="mb-3">
+			<div class="form-check">
+				<label class="form-check-label">
+					<input class="form-check-input" type="checkbox" asp-for="IsDynamic"  /> 这是一个动态成就
+				</label>
+			</div>
+			<div class="form-text">选中上面的复选框将提示用户这个成就的获得条件可能会动态变化，也即意味着用户获得这项成就一段时间后，可能会因为不再满足新情况而失去成就。建议尽量避免设定动态成就，因为这可能会降低用户获得成就时的满足感。注意：这个选项只用于提醒用户成就性质，并不影响颁发成就的应用权限，应用始终可以通过 API 接口撤销用户已经获得的成就。</div>
+		</div>
 
 		<hr />
 

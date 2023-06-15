@@ -7,38 +7,36 @@ namespace CC98.Achievement.Services;
 /// </summary>
 public class AchievementBackService : IDisposable
 {
+	/// <summary>
+	/// 初始化 <see cref="AchievementBackService"/> 对象的新实例。
+	/// </summary>
+	/// <param name="configuration"><see cref="IConfiguration"/> 服务对象。</param>
 	public AchievementBackService(IConfiguration configuration)
 	{
-		Configuration = configuration;
-		InitializeInnerService();
+		// 配置内部服务对象。
+		InnerService = CreateInnerService(HttpClient, configuration);
 	}
 
 	/// <summary>
-	/// 初始化内部 <see cref="AchievementService"/> 对象。
+	/// 创建可用后续使用的 <see cref="AchievementService"/> 对象。
 	/// </summary>
-	private void InitializeInnerService()
+	/// <returns>可供后续使用的 <see cref="AchievementService"/> 对象。</returns>
+	/// <exception cref="InvalidOperationException">一个或多个系统参数无效。</exception>
+	private static AchievementService CreateInnerService(HttpClient httpClient, IConfiguration configuration)
 	{
-		// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-		if (InnerService != null)
-		{
-			return;
-		}
-
+		// 配置成就服务相关设置
 		var options = new AchievementServiceOptions
 		{
-			ClientId = Configuration["Authentication:CC98:ClientId"] ?? throw new InvalidOperationException("未配置成就系统 ClientID。"),
-			ClientSecret = Configuration["Authentication:CC98:ClientSecret"] ?? throw new InvalidOperationException("未配置成就系统 ClientSecret。"),
-			Authority = Configuration["Authentication:CC98:Authority"],
-			ApiBaseUri = Configuration["Api:BaseUri"]
+			ClientId = configuration["Authentication:CC98:ClientId"] ?? throw new InvalidOperationException("未配置成就系统 ClientID。"),
+			ClientSecret = configuration["Authentication:CC98:ClientSecret"] ?? throw new InvalidOperationException("未配置成就系统 ClientSecret。"),
+			Authority = configuration["Authentication:CC98:Authority"] ?? throw new InvalidOperationException("未配置成就系统授权机构 URL。"),
+			ApiBaseUri = configuration["Api:BaseUri"] ?? throw new InvalidOperationException("未配置成就系统 API 地址。"),
 		};
 
-		InnerService = new(HttpClient, options);
+		// 设置内部服务
+		return new(httpClient, options);
 	}
 
-	/// <summary>
-	/// 应用程序配置信息。
-	/// </summary>
-	private IConfiguration Configuration { get; }
 
 	/// <summary>
 	/// HTTP 请求服务对象。

@@ -19,6 +19,9 @@ public class AchievementController : Controller
 	/// 初始化 <see cref="AchievementController"/> 的新实例。
 	/// </summary>
 	/// <param name="dbContext"><see cref="AchievementDbContext"/> 服务对象。</param>
+	/// <param name="messageAccessor"><see cref="IOperationMessageAccessor"/> 服务对象。</param>
+	/// <param name="sharedResourcesLocalizer"><see cref="IDynamicHtmlLocalizer{SharedResource}"/> 服务对象。</param>
+	/// <param name="localizer"><see cref="IDynamicHtmlLocalizer{AchievementController}"/> 服务对象。</param>
 	public AchievementController(AchievementDbContext dbContext, IOperationMessageAccessor messageAccessor, IDynamicHtmlLocalizer<SharedResources> sharedResourcesLocalizer, IDynamicHtmlLocalizer<AchievementController> localizer)
 	{
 		DbContext = dbContext;
@@ -304,11 +307,19 @@ public class AchievementController : Controller
 	}
 
 
+	/// <summary>
+	/// 显示编辑成就记录页面。
+	/// </summary>
+	/// <param name="category">成就分类名称。</param>
+	/// <param name="name">成就名称。</param>
+	/// <param name="userName">用户名。</param>
+	/// <param name="cancellationToken">用于取消操作的令牌。</param>
+	/// <returns>表示异步操作的任务。操作结果为响应。</returns>
 	[HttpGet]
 	[Authorize(Policies.Review)]
-	public async Task<IActionResult> EditRecord(int codeName, string userName, CancellationToken cancellationToken)
+	public async Task<IActionResult> EditRecord(string category, string name, string userName, CancellationToken cancellationToken)
 	{
-		var item = await DbContext.Records.FindAsync(new object[] { codeName, userName }, cancellationToken);
+		var item = await DbContext.Records.FindAsync(new object[] { category, name, userName }, cancellationToken);
 
 		if (item == null)
 		{
@@ -318,6 +329,12 @@ public class AchievementController : Controller
 		return PartialView(item);
 	}
 
+	/// <summary>
+	/// 执行成就记录编辑操作。
+	/// </summary>
+	/// <param name="model">数据模型。</param>
+	/// <param name="cancellationToken">用于取消操作的令牌。</param>
+	/// <returns>操作结果。</returns>
 	[HttpPost]
 	[ValidateAntiForgeryToken]
 	[Authorize(Policies.Review)]
@@ -382,18 +399,18 @@ public class AchievementController : Controller
 	/// <summary>
 	/// 清空某项成就的所有记录。
 	/// </summary>
-	/// <param name="categoryName">成就的分类标识。</param>
-	/// <param name="codeName">成就的标识。</param>
+	/// <param name="category">成就的分类标识。</param>
+	/// <param name="name">成就的标识。</param>
 	/// <param name="cancellationToken">用于取消操作的令牌。</param>
 	/// <returns>表示异步操作的任务。</returns>
 	[HttpPost]
 	[ValidateAntiForgeryToken]
 	[Authorize(Policies.Review)]
-	public async Task<IActionResult> ClearRecords(string categoryName, string codeName, CancellationToken cancellationToken = default)
+	public async Task<IActionResult> ClearRecords(string category, string name, CancellationToken cancellationToken = default)
 	{
 		var items =
 			from i in DbContext.Records
-			where i.CategoryName == categoryName && i.AchievementName == codeName
+			where i.CategoryName == category && i.AchievementName == name
 			select i;
 
 		DbContext.Records.RemoveRange(items);
@@ -402,7 +419,7 @@ public class AchievementController : Controller
 		{
 			await DbContext.SaveChangesAsync(cancellationToken);
 			Utility.AddMessage(MessageAccessor, OperationMessageLevel.Success, SharedResourcesLocalizer.Html.OperationSucceeded, Localizer.Html.RecordCleared);
-			return RedirectToAction("Edit", "Achievement", new { id = codeName });
+			return RedirectToAction("Edit", "Achievement", new { category, name });
 		}
 		catch (DbUpdateException ex)
 		{
@@ -426,6 +443,11 @@ public class AchievementController : Controller
 		ModelState.Remove(nameof(AchievementItem.Category));
 	}
 
+	/// <summary>
+	/// 生成成就的详情 URL。
+	/// </summary>
+	/// <param name="item">成就对象。</param>
+	/// <returns><paramref name="item"/> 对应的详细信息 URL。</returns>
 	private string? GetUrl(AchievementItem item) => Url.Action("Detail", "Achievement",
 		new { cateory = item.CategoryName, name = item.CodeName });
 }
