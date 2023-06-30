@@ -26,6 +26,19 @@ public static class Utility
 	public static void AddMessage(this IOperationMessageAccessor messageAccessor, OperationMessageLevel level,
 		dynamic title, dynamic description)
 	{
-		OperationMessageExtensions.Add(messageAccessor, level, (IHtmlContent)title, (IHtmlContent)description);
+		messageAccessor.Add(level, (IHtmlContent)title, (IHtmlContent)description);
 	}
+
+	/// <summary>
+	/// 如果 <paramref name="source"/> 不为 <c>null</c>，将其变换为给定的类型；否则返回 <c>null</c>。
+	/// </summary>
+	/// <typeparam name="TSource">变换前的数据类型。</typeparam>
+	/// <typeparam name="TResult">变换后的数据类型。</typeparam>
+	/// <param name="source">要变换的数据。</param>
+	/// <param name="selector">用于变换数据的方法。</param>
+	/// <returns>如果 <paramref name="source"/> 不为 <c>null</c>，则返回使用 <paramref name="selector"/> 变换后的结果；否则返回 <c>null</c>。</returns>
+	public static TResult? SelectIfNotNull<TSource, TResult>(this TSource? source, Func<TSource, TResult> selector)
+	where TSource : class
+	where TResult : class
+		=> source != null ? selector(source) : null;
 }

@@ -4,6 +4,7 @@ using RestSharp;
 using RestSharp.Authenticators.OAuth2;
 
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -152,6 +153,19 @@ public class AchievementService
 	}
 
 	/// <summary>
+	/// 尝试获取给定用户当前的所有成就进度信息。
+	/// </summary>
+	/// <param name="userName">用户名。</param>
+	/// <param name="cancellationToken">用于取消操作的令牌。</param>
+	/// <returns>表示异步操作的任务。操作结果包含给定用户当前所有成就及其进度信息。</returns>
+	public async Task<IEnumerable<RecordInfo>> GetUserAchievementsAsync(string userName, CancellationToken cancellationToken = default)
+	{
+		await EnsureLogOnAsync(cancellationToken);
+		return await RestClient!.TryExecuteJsonAsync<IEnumerable<RecordInfo>>(Method.Get,
+			$"achievement?userName={Uri.EscapeDataString(userName)}", cancellationToken);
+	}
+
+	/// <summary>
 	/// 尝试更新单个单个成就项信息。
 	/// </summary>
 	/// <param name="info">成就项信息。</param>
@@ -167,7 +181,7 @@ public class AchievementService
 		}
 
 		await EnsureLogOnAsync(cancellationToken);
-		await RestClient!.TryExecuteJsonAsync(Method.Post, "user-achievements", info, cancellationToken);
+		await RestClient!.TryExecuteJsonAsync(Method.Post, "user-achievement", info, cancellationToken);
 	}
 
 	/// <summary>

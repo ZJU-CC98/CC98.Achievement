@@ -144,8 +144,8 @@ public class AchievementController : ControllerBase
 	/// </summary>
 	/// <param name="info">用户和成就信息。</param>
 	/// <returns>表示异步操作的任务。</returns>
-	[HttpPost("user-achievements")]
-	public async Task<ActionResult> SetUserAchievement([FromBody] UserAchievementListInfo info)
+	[HttpPost("user-achievement")]
+	public async Task<ActionResult> SetUserAchievements([FromBody] UserAchievementListInfo info)
 	{
 		var cancellationToken = HttpContext.RequestAborted;
 
