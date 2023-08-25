@@ -93,7 +93,7 @@ public class AchievementController : Controller
 				Record = r
 			};
 
-		ViewBag.CategoryId = category!;
+		ViewBag.Category = category!;
 		return View(await result.ToPagedListAsync(20, page, cancellationToken));
 	}
 
@@ -265,9 +265,10 @@ public class AchievementController : Controller
 	/// <returns>操作结果。</returns>
 	[HttpGet]
 	[Authorize(Policies.Review)]
-	public IActionResult AddRecord(int codeName, CancellationToken cancellationToken = default)
+	public IActionResult AddRecord(string categoryName, string codeName, CancellationToken cancellationToken = default)
 	{
-		ViewBag.ItemId = codeName;
+		ViewBag.CategoryName = categoryName;
+		ViewBag.AchievementName = codeName;
 		return PartialView();
 	}
 

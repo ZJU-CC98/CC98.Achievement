@@ -1,14 +1,14 @@
 ﻿@model IPagedList<AchievementAndUserRecordInfo>
 @{
 	ViewBag.Title = "成就一览";
-	var categoryId = (int?)ViewBag.CategoryId;
+	var category = (string?)ViewBag.Category;
 }
 
 
 <div class="row">
 
 	<div class="col-3">
-		<vc:category-list user-name="@User.Identity?.Name" category-id="@categoryId" />
+		<vc:category-list user-name="@User.Identity?.Name" category="@category" />
 	</div>
 	<div class="col-9">
 

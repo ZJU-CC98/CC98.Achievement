@@ -2,7 +2,7 @@
 @model CategorySummaryInfo
 @inject IDynamicViewLocalizer Localizer
 @{
-	var categoryName = (string?)ViewBag.CategoryName;
+	var categoryName = (string?)ViewBag.Category;
 	var isActive = categoryName == Model.CodeName;
 	var userInfo = Model as CategoryUserSummaryInfo;
 }

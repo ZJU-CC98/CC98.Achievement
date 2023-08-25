@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace CC98.Achievement;
 
@@ -45,6 +46,7 @@ public abstract class AchievementBaseInfo
 	/// <summary>
 	/// 成就的类型。有关成就类型的详细信息，请类型文档。
 	/// </summary>
+	[JsonConverter(typeof(JsonStringEnumConverter))]
 	public AchievementState State { get; set; }
 
 	/// <summary>

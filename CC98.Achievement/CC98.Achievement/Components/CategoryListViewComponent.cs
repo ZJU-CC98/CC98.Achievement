@@ -29,13 +29,13 @@ public class CategoryListViewComponent : ViewComponent
 	/// 呈现组件时调用该方法。
 	/// </summary>
 	/// <param name="userName">数据相关的用户名。如果为 <c>null</c> 则显示所有用户的统计信息。</param>
-	/// <param name="categoryId">要显示的分类标识。如果为 <c>null</c> 则显示未分类项目。</param>
+	/// <param name="category">要显示的分类标识。如果为 <c>null</c> 则显示未分类项目。</param>
 	/// <returns>表示异步操作的任务。</returns>
-	public async Task<IViewComponentResult> InvokeAsync(string? userName, int? categoryId)
+	public async Task<IViewComponentResult> InvokeAsync(string? userName, string? category)
 	{
 		var cancellationToken = HttpContext.RequestAborted;
 
-		ViewBag.CategoryId = categoryId!;
+		ViewBag.Category = category!;
 
 		if (string.IsNullOrEmpty(userName))
 		{
