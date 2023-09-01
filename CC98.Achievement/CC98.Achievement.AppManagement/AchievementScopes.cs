@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CC98.Achievement;
+﻿namespace CC98.Achievement;
 
 /// <summary>
 /// 定义成就系统相关的领域。该类型为静态类型。

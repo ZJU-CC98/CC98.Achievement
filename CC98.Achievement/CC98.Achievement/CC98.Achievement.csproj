@@ -17,6 +17,10 @@
     <Content Remove="compilerconfig.json" />
   </ItemGroup>
 
+	<ItemGroup>
+	  <_WebToolingArtifacts Remove="Properties\PublishProfiles\CC98-Debug.pubxml" />
+	</ItemGroup>
+
   <ItemGroup>
     <None Include="bundleconfig.json" />
     <None Include="compilerconfig.json" />
@@ -26,6 +30,7 @@
     <PackageReference Include="CC98.AppSetting" Version="3.0.0" />
     <PackageReference Include="CC98.Authentication.OpenIdConnect" Version="2.0.1" />
     <PackageReference Include="CC98.Identity.Scopes" Version="2.0.1" />
+    <PackageReference Include="EFCore.BulkExtensions.SqlServer" Version="7.1.5" />
     <PackageReference Include="IdentityModel.AspNetCore.OAuth2Introspection" Version="6.2.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2023.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.10" />

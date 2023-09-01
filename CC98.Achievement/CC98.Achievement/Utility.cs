@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Html;
+﻿using System.Security.Principal;
+
+using Microsoft.AspNetCore.Html;
 
 using Sakura.AspNetCore;
 
@@ -41,4 +43,35 @@ public static class Utility
 	where TSource : class
 	where TResult : class
 		=> source != null ? selector(source) : null;
+
+
+	/// <summary>
+	/// 对集合中的每个元素遍历执行操作。
+	/// </summary>
+	/// <typeparam name="T">集合的元素类型。</typeparam>
+	/// <param name="source">要遍历的集合。</param>
+	/// <param name="action">要对每个元素进行的操作。</param>
+	public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
+	{
+		foreach (var item in source)
+		{
+			action(item);
+		}
+	}
+
+	/// <summary>
+	/// 对集合中的每个元素遍历执行操作。
+	/// </summary>
+	/// <typeparam name="T">集合的元素类型。</typeparam>
+	/// <param name="source">要遍历的集合。</param>
+	/// <param name="action">要对每个元素进行的操作。</param>
+	public static void ForEach<T>(this IEnumerable<T> source, Action<T, int> action)
+	{
+		var index = 0;
+		foreach (var item in source)
+		{
+			action(item, index);
+			index++;
+		}
+	}
 }

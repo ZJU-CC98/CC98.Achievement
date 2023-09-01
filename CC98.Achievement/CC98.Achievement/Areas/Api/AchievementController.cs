@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 using System.Security.Claims;
+using EFCore.BulkExtensions;
 
 namespace CC98.Achievement.Areas.Api;
 
@@ -77,61 +78,45 @@ public class AchievementController : ControllerBase
 			return BadRequest("当前应用未在成就系统中注册，请联系管理员。");
 		}
 
-		// 记录尚未处理过的项目
-		var unhandledItems = new HashSet<AchievementItem>(currentCategory.Items);
-		var result = new AchievementRegisterResponse();
-		var index = 0;
+		var newItems =
+			(from i in info.Items
+			 select new AchievementItem
+			 {
+				 CategoryName = currentCategory.CodeName,
+				 CodeName = i.CodeName,
+				 DisplayName = i.DisplayName,
+				 Description = i.Description,
+				 Hint = i.Hint,
+				 IconUri = i.IconUri,
+				 IsDynamic = i.IsDynamic,
+				 MaxValue = i.MaxValue,
+				 Reward = i.Reward,
+				 State = i.State
+			 }).ToArray();
 
-		foreach (var item in info.Items)
-		{
-			var databaseItem = currentCategory.Items.FirstOrDefault(i => i.CodeName == item.CodeName);
-
-			if (databaseItem == null)
-			{
-				databaseItem = new()
-				{
-					CodeName = item.CodeName,
-					Category = currentCategory
-				};
-
-				DbContext.Items.Add(databaseItem);
-
-				result.NewItemCount++;
-			}
-			else
-			{
-				unhandledItems.Remove(databaseItem);
-				result.UpdatedItemCount++;
-			}
-
-
-			databaseItem.DisplayName = item.DisplayName;
-			databaseItem.Description = item.Description;
-			databaseItem.Hint = item.Hint;
-			databaseItem.Reward = item.Reward;
-			databaseItem.IconUri = item.IconUri;
-			databaseItem.MaxValue = item.MaxValue;
-			databaseItem.State = item.State;
-
-			if (info.Options.ReorderItems)
-			{
-				databaseItem.SortOrder = index;
-			}
-
-			index++;
-		}
-
-		// 删除多余项目
+		// 重新排序
 		if (info.Options.ReorderItems)
 		{
-			result.DeletedItemCount = unhandledItems.Count;
-			DbContext.Items.RemoveRange(unhandledItems);
+			newItems.ForEach((item, index) => item.SortOrder = index);
 		}
 
 		try
 		{
-			await DbContext.SaveChangesAsync(cancellationToken);
-			return result;
+			// 如果要求删除未列出项目，则执行删除，删除同步的标准为当前 categoryName 匹配
+			if (info.Options.RemoveAllNonListedItems)
+			{
+				await DbContext.BulkInsertOrUpdateOrDeleteAsync(newItems,
+					bulkAction: b =>
+						b.SetSynchronizeFilter<AchievementItem>(i => i.CategoryName == currentCategory.CodeName),
+					cancellationToken: cancellationToken);
+			}
+			else
+			{
+				await DbContext.BulkInsertOrUpdateAsync(newItems, cancellationToken: cancellationToken);
+			}
+
+			await DbContext.BulkSaveChangesAsync(cancellationToken: cancellationToken);
+			return new AchievementRegisterResponse();
 		}
 		catch (DbUpdateException ex)
 		{
@@ -175,11 +160,11 @@ public class AchievementController : ControllerBase
 				UserName = info.UserName
 			};
 
-		DbContext.Records.UpdateRange(updatedItems);
 
 		try
 		{
-			await DbContext.SaveChangesAsync(cancellationToken);
+			await DbContext.BulkInsertOrUpdateAsync(updatedItems.ToArray(), cancellationToken: cancellationToken);
+			await DbContext.BulkSaveChangesAsync(cancellationToken: cancellationToken);
 			return NoContent();
 		}
 		catch (DbUpdateException ex)
