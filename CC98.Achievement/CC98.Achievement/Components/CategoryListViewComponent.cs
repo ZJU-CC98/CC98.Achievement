@@ -37,17 +37,27 @@ public class CategoryListViewComponent : ViewComponent
 
 		ViewBag.Category = category!;
 
+		// 去掉所有特殊成就
 		if (string.IsNullOrEmpty(userName))
 		{
+			var countItems =
+				from i in DbContext.Items
+				where i.State != AchievementState.Special
+				select i;
+
 			var items =
-				from c in DbContext.Categories
-				select new CategorySummaryInfo
-				{
-					CodeName = c.CodeName,
-					DisplayName = c.DisplayName,
-					UserCount = c.UserCount,
-					AchievementCount = c.Items.Count
-				};
+			   from c in DbContext.Categories
+			   join i in countItems
+				   on c.CodeName equals i.CategoryName into g
+			   select new CategorySummaryInfo
+			   {
+				   CodeName = c.CodeName,
+				   DisplayName = c.DisplayName,
+				   UserCount = c.UserCount,
+				   AchievementCount = g.Count()
+
+			   };
+
 			return View("NoUser", await items.ToArrayAsync(cancellationToken));
 		}
 		else

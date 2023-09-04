@@ -89,7 +89,7 @@ public class AchievementController : Controller
 				rs
 			from r in rs.DefaultIfEmpty()
 			where r.IsCompleted || i.State != AchievementState.Special
-			orderby i.SortOrder
+			orderby i.CategoryName, i.SortOrder
 			select new AchievementAndUserRecordInfo
 			{
 				Item = i,
