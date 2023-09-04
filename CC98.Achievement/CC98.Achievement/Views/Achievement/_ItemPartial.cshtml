@@ -15,23 +15,38 @@
 				["bg-success text-white"] = Model.CompleteState == AchievementCompleteState.Completed,
 				//["bg-primary text-white"] = Model.CompleteState == AchievementCompleteState.Progress
 			};
+
+
+	// 是否已经完成，这影响是否彩色显示
+	var isCompleted = Model.CompleteState == AchievementCompleteState.Completed;
+
+	// 是否隐藏，隐藏内容会用隐藏模板替代
+	var shouldHide = Model.Item.State == AchievementState.Hidden && !isCompleted;
+	var itemData = shouldHide ? AppSettingService.Current.HiddenItemTemplate : Model.Item;
+
+	// 记录对象，用于子模板
+	ViewBag.Record = Model.Record!;
 }
 <div class="col mb-3">
-	<div class="card h-100" asp-conditional-classes="borderClasses" data-bs-toggle="popover" data-bs-title="@Model.Item.DisplayName" data-bs-html="true" data-bs-trigger="hover" data-bs-content-id="@contentElementId">
+	<div class="card h-100" asp-conditional-classes="borderClasses" data-bs-toggle="popover" data-bs-title="@itemData.DisplayName" data-bs-html="true" data-bs-trigger="hover" data-bs-content-id="@contentElementId">
 
-		<a asp-controller="Achievement" asp-action="Detail" asp-route-category="@Model.Item.CategoryName" asp-route-name="@Model.Item.CodeName" class="stretched-link"></a>
+		@if (!shouldHide)
+		{
+			// 如果隐藏则不显示链接
+			<a asp-controller="Achievement" asp-action="Detail" asp-route-category="@Model.Item.CategoryName" asp-route-name="@Model.Item.CodeName" class="stretched-link"></a>
+		}
 
 		<div class="card-body p-0">
 
 			<div class="d-flex">
 				<div class="flex-shrink-0">
-					<img src="@GetRealIconUri(Model.Item)" class="m-2" style="max-width: 64px; max-height: 64px;" alt="成就图标" />
+					<img asp-conditional-class-gray="@(!isCompleted)" src="@GetRealIconUri(itemData)" class="m-2" style="max-width: 64px; max-height: 64px;" alt="成就图标" />
 				</div>
 				<div class="flex-grow-1">
 					<div class="d-flex justify-content-between align-items-center m-2">
-						<h5 class="m-0"><strong>@Model.Item.DisplayName</strong></h5>
+						<h5 class="m-0"><strong>@itemData.DisplayName</strong></h5>
 
-						@switch (Model.Item.State)
+						@switch (itemData.State)
 						{
 							case AchievementState.Normal:
 								break;
@@ -45,7 +60,7 @@
 
 					</div>
 					<hr class="m-0" />
-					<div class="m-2">@Model.Item.Description</div>
+					<div class="m-2">@itemData.Description</div>
 				</div>
 			</div>
 		</div>
@@ -67,9 +82,8 @@
 						<small class="flex-grow-0">
 							<span class="text-primary">正在获得</span>
 						</small>
-						<div class="progress bg-white flex-grow-1 ms-2">
-							<div class="progress-bar bg-primary text-white" role="progressbar" data-toggle="progress" data-now-value="@Model.Record.CurrentValue" data-max-value="@Model.Item.MaxValue">
-								<span>@($"{Model.Record.CurrentValue} / {Model.Item.MaxValue}")</span>
+						<div class="progress bg-white flex-grow-1 ms-2" role="progressbar" aria-valuenow="@Model.Record.CurrentValue" aria-valuemax="@Model.Item.MaxValue">
+							<div class="progress-bar overflow-visible" data-toggle="progress" data-now-value="@Model.Record.CurrentValue" data-max-value="@Model.Item.MaxValue">
 							</div>
 						</div>
 					</div>
@@ -93,14 +107,14 @@
 	@*弹出框内容，隐藏*@
 	<div class="visually-hidden">
 		<div id="@contentElementId">
-			<partial name="_DetailPopover" model="@Model.Item" />
+			<partial name="_DetailPopover" model="@itemData" />
 		</div>
 	</div>
 </div>
 
 @functions
 {
-	string GetRealIconUri(AchievementItem item)
+	string GetRealIconUri(AchievementBaseInfo item)
 	{
 		return item.IconUri ?? AppSettingService.Current.DefaultIconUri;
 	}

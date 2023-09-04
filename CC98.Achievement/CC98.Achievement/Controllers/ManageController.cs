@@ -8,7 +8,7 @@ using Sakura.AspNetCore.Localization;
 
 using System.Text.Json;
 using System.Text.Json.Serialization;
-
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace CC98.Achievement.Controllers;
@@ -61,6 +61,11 @@ public class ManageController : Controller
 	private AchievementBackService BackService { get; }
 
 	/// <summary>
+	/// 获取系统预定义的成就项目。
+	/// </summary>
+	private static AchievementItemRegisterInfo[] AchievementList { get; } = LoadPredefinedItems();
+
+	/// <summary>
 	/// 显示管理界面主页。
 	/// </summary>
 	/// <returns>操作结果。</returns>
@@ -73,18 +78,14 @@ public class ManageController : Controller
 	/// <summary>
 	/// 从系统文件中加载预制的成就数据。
 	/// </summary>
-	/// <param name="cancellationToken">用于取消操作的令牌。</param>
 	/// <returns></returns>
-	private async Task<AchievementItemRegisterInfo[]> LoadPredefinedItemsAsync(CancellationToken cancellationToken = default)
+	private static AchievementItemRegisterInfo[] LoadPredefinedItems()
 	{
 		var options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
 		options.Converters.Add(new JsonStringEnumConverter());
 
-		await using var file = System.IO.File.OpenRead("achievements.json");
-		var result =
-			await JsonSerializer.DeserializeAsync<AchievementItemRegisterInfo[]>(file, options, cancellationToken);
+		return JsonSerializer.Deserialize<AchievementItemRegisterInfo[]>(Properties.Resources.AchievementList, options)!;
 
-		return result!;
 	}
 
 	/// <summary>
@@ -100,8 +101,11 @@ public class ManageController : Controller
 		{
 			var result = await BackService.InnerService.RegisterAchievementsAsync(new()
 			{
-				Items = await LoadPredefinedItemsAsync(cancellationToken),
-				Options = new(),
+				Items = AchievementList,
+				Options = new()
+				{
+					ReorderItems = true
+				}
 			}, cancellationToken);
 
 			Utility.AddMessage(MessageAccessor, OperationMessageLevel.Success,
@@ -120,17 +124,31 @@ public class ManageController : Controller
 	/// <summary>
 	/// 显示系统设置页面。
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>操作结果。</returns>
 	[HttpGet]
 	public IActionResult SystemSetting()
 	{
 		return View(AppSettingService.Current);
 	}
 
+	/// <summary>
+	/// 执行系统更改操作。
+	/// </summary>
+	/// <param name="model">数据模型。</param>
+	/// <returns>操作结果。</returns>
 	[HttpPost]
 	[ValidateAntiForgeryToken]
 	public IActionResult SystemSetting(SystemSetting model)
 	{
+		// 移除对模板无意义的属性要求
+		ModelState.Remove<SystemSetting>(i => i.HiddenItemTemplate.CodeName);
+		ModelState.Remove<SystemSetting>(i => i.HiddenItemTemplate.Category);
+		ModelState.Remove<SystemSetting>(i => i.HiddenItemTemplate.CategoryName);
+
+
+		// 强制设置为普通显示模式
+		model.HiddenItemTemplate.State = AchievementState.Normal;
+
 		if (ModelState.IsValid)
 		{
 			AppSettingService.Current = model;

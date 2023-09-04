@@ -18,7 +18,7 @@ public class SystemSetting : IAppSettingWithDefaultValue<SystemSetting>
 	/// <summary>
 	/// 隐藏成就的模板信息。
 	/// </summary>
-	public AchievementBaseInfo HiddenItemTemplate { get; set; } = new AchievementItem();
+	public AchievementItem HiddenItemTemplate { get; set; } = new();
 
 	/// <summary>
 	/// 隐藏成就的显示部分。

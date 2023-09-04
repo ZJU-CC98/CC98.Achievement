@@ -1,8 +1,32 @@
-﻿@model AchievementItem
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@model AchievementItem
+@inject IViewLocalizer ViewLocalizer
+@{
+	var record = (AchievementRecord?)ViewBag.Record;
+}
 
 @if (!string.IsNullOrEmpty(Model.Description))
 {
 	<div class="card-text">@Model.Description</div>
+	<hr />
+}
+
+@if (record != null)
+{
+	<strong>进度</strong>
+	<div class="card-text">
+
+		@if (record.IsCompleted)
+		{
+			<span class="text-success">已完成</span>
+		}
+		else
+		{
+			<span class="text-primary">@ViewLocalizer["{0}/{1}", record.CurrentValue!, Model.MaxValue!]</span>
+		}
+
+	</div>
+
 	<hr />
 }
 

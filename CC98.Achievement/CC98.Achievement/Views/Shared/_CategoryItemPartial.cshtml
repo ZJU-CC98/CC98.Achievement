@@ -30,16 +30,16 @@
 	@if (userInfo != null)
 	{
 		<div class="card-body">
-			<strong>
+			<h4 class="fw-bold">
 				<span>@Localizer.Html.FinishedCount(userInfo.UserFinishedCount, userInfo.AchievementCount)</span>
 				@if (userInfo.UserSpecialCount != 0)
 				{
 					<span class="text-success" title="@Localizer.Html.SpecialCountHelp">@Localizer.Html.SpecialCount(userInfo.UserSpecialCount)</span>
 				}
-			</strong>
+			</h4>
 
-			<div class="progress">
-				<div class="progress-bar bg-success" role="progressbar"></div>
+			<div class="progress" role="progressbar" aria-labe="@Model.DisplayName" aria-valuenow="@userInfo.UserFinishedCount" aria-valuemax="@userInfo.AchievementCount">
+				<div class="progress-bar" data-toggle="progress" data-now-value="@userInfo.UserFinishedCount" data-max-value="@userInfo.AchievementCount"></div>
 			</div>
 
 		</div>

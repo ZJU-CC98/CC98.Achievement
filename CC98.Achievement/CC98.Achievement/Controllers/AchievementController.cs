@@ -66,6 +66,7 @@ public class AchievementController : Controller
 			from i in DbContext.Items
 			select i;
 
+		// 用户左边筛选了分类
 		if (category != null)
 		{
 			items = from i in items
@@ -73,12 +74,14 @@ public class AchievementController : Controller
 					select i;
 		}
 
+		// 筛选出当前用户的所有记录
 		var userRecords =
 			from r in DbContext.Records
 			where r.UserName == userName
 			select r;
 
-
+		// 跳过所有用户未完成的特殊成
+		// 隐藏成就在此处仍然包括，显示部分进行隐藏处理
 		var result =
 			from i in items
 			join r in userRecords
@@ -94,7 +97,7 @@ public class AchievementController : Controller
 			};
 
 		ViewBag.Category = category!;
-		return View(await result.ToPagedListAsync(20, page, cancellationToken));
+		return View(await result.ToPagedListAsync(12, page, cancellationToken));
 	}
 
 	/// <summary>
@@ -267,6 +270,8 @@ public class AchievementController : Controller
 	[Authorize(Policies.Review)]
 	public IActionResult AddRecord(string categoryName, string codeName, CancellationToken cancellationToken = default)
 	{
+		cancellationToken.ThrowIfCancellationRequested();
+
 		ViewBag.CategoryName = categoryName;
 		ViewBag.AchievementName = codeName;
 		return PartialView();

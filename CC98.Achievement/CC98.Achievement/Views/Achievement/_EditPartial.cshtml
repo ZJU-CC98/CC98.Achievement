@@ -48,9 +48,16 @@
 
 		<div class="mb-3">
 			<label asp-for="IconUri" class="form-label">成就图标</label>
-			<input asp-for="IconUri" type="url" class="form-control" rows="3" placeholder="使用默认图标" />
+			<input asp-for="IconUri" type="url" class="form-control" placeholder="使用默认图标" />
 			<span asp-validation-for="IconUri" class="text-danger"></span>
 			<div class="form-text">该成就的图标。用户可以在成就系统界面中看到该图标。如果不使用图标，则该成就将使用系统提供的默认图标。从用户体验角度而言，建议你为每个成就都提供辨识度高的图标。</div>
+		</div>
+
+		<div class="mb-3">
+			<label asp-for="SortOrder" class="form-label">排序值</label>
+			<input asp-for="SortOrder" type="url" class="form-control" />
+			<span asp-validation-for="IconUri" class="text-danger"></span>
+			<div class="form-text">该成就的排序值，在同一个应用提供的成就列表中，排序值越小的成就显示顺序越靠前。如果有成就的排序值相同，则它们间的顺序可能是随机的。</div>
 		</div>
 
 		<hr />
@@ -111,7 +118,7 @@
 		<div class="mb-3">
 			<div class="form-check">
 				<label class="form-check-label">
-					<input class="form-check-input" type="checkbox" asp-for="IsDynamic"  /> 这是一个动态成就
+					<input class="form-check-input" type="checkbox" asp-for="IsDynamic" /> 这是一个动态成就
 				</label>
 			</div>
 			<div class="form-text">选中上面的复选框将提示用户这个成就的获得条件可能会动态变化，也即意味着用户获得这项成就一段时间后，可能会因为不再满足新情况而失去成就。建议尽量避免设定动态成就，因为这可能会降低用户获得成就时的满足感。注意：这个选项只用于提醒用户成就性质，并不影响颁发成就的应用权限，应用始终可以通过 API 接口撤销用户已经获得的成就。</div>

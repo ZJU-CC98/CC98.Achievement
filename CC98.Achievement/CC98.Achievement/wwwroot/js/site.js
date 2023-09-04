@@ -20,6 +20,7 @@ if (!String.format) {
 var popoverElementList = document.querySelectorAll('[data-bs-toggle="popover"]');
 var popoverList = popoverElementList.forEach(function (ele, key, parent) {
 	var popover = new bootstrap.Popover(ele, {
+		title: '成就详情',
 		content: document.getElementById(ele.getAttribute('data-bs-content-id'))
 	});
 });
@@ -45,6 +46,16 @@ window.onload = function () {
 		if (rate > 1) {
 			rate = 1;
 		}
+
+		var style = 'bg-primary';
+		if (rate < 1 / 3) {
+			style = 'bg-danger';
+		}
+		else if (rate < 2 / 3) {
+			style = 'bg-warning';
+		}
+
+		ele.classList.add(style);
 
 		ele.style.width = String.format('{0}%', rate * 100);
 	});

@@ -17,6 +17,7 @@ using Sakura.AspNetCore.Localization;
 using Sakura.AspNetCore.Mvc;
 
 using System.Text.Json.Serialization;
+using CC98.Achievement.Settings;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -122,6 +123,13 @@ builder.Services.AddAppSetting<SystemSetting>(options =>
 		options.UseSqlServer(builder.Configuration.GetConnectionString("CC98V2"));
 	});
 
+// 系统设置
+builder.Services.Configure<DataUpdatePeriodSetting>(builder.Configuration.GetSection("DataUpdatePeriod"));
+
+// 定时服务
+builder.Services.AddHostedService<UpdateUserCountService>();
+
+// API 文档
 builder.Services.AddSwaggerGen(options =>
 {
 
