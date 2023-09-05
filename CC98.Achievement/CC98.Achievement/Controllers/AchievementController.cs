@@ -251,7 +251,7 @@ public class AchievementController : Controller
 				   {
 					   Record = r,
 					   User = u
-				   }).ToPagedListAsync(20, userPage, cancellationToken);
+				   }).ToPagedListAsync(24, userPage, cancellationToken);
 
 		var model = new AchievementDetailInfo
 		{

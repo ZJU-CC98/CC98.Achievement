@@ -12,53 +12,59 @@
 	<hr />
 }
 
+<div id="main-accordion" class="accordion">
+	<div class="accordion-item">
 
-<div class="card">
-	<div class="card-header">
-		<a href="#" data-bs-toggle="collapse" data-bs-target="#user-info-panel" role="button" aria-controls="user-info-panel">获得情况</a>
-	</div>
-	<div class="collapse" id="user-info-panel">
+		<h2 class="accordion-header">
+			<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#user-info-collapse-panel" aria-expanded="true" aria-controls="user-info-collapse-panel">获得情况</button>
+		</h2>
 
-		@if (Model.UserRecords.Any())
-		{
+		<div id="user-info-collapse-panel" class="accordion-collapse collapse show" data-bs-parent="#main-accordion">
+			<div class="accordion-body">
 
-			<div class="card-body">
-				<div class="alert alert-info">@Localizer.Html.TotalUserCount(Model.UserRecords.TotalCount)</div>
+				@if (Model.UserRecords.Any())
+				{
+					<div class="card-body">
+						<div class="alert alert-info">@Localizer.Html.TotalUserCount(Model.UserRecords.TotalCount)</div>
 
-				<div class="row g-3">
-					@foreach (var item in Model.UserRecords)
-					{
-						var popoverId = $"user-record-detail-{item.Record.UserName}";
+						<div class="row g-3">
+							@foreach (var item in Model.UserRecords)
+							{
+								var popoverId = $"user-record-detail-{item.Record.UserName}";
 
-						<div class="col-3 col-sm-2 col-lg-1">
-							<div class="card h-100" data-bs-toggle="popover" data-bs-title="成就获取详情" data-bs-html="true" data-bs-trigger="hover" data-bs-content-id="@popoverId">
-								<img src="@item.User.PortraitUri" alt="用户头像" class="card-img" />
-							</div>
+								<div class="col-3 col-sm-2 col-lg-1">
+									<div class="card h-100" data-bs-toggle="popover" data-bs-title="成就获取详情" data-bs-html="true" data-bs-trigger="hover" data-bs-content-id="@popoverId">
+										<img src="@item.User.PortraitUri" alt="用户头像" class="card-img"/>
+									</div>
 
-							@*弹出框内容，隐藏*@
-							<div class="visually-hidden">
-								<div id="@popoverId">
-									<strong>@item.User.Name</strong>
-									<br />
-									<div>获得于 @item.Record.Time.ToString("g")</div>
+									@*弹出框内容，隐藏*@
+									<div class="visually-hidden">
+										<div id="@popoverId">
+											<strong>@item.User.Name</strong>
+											<br/>
+											<div>获得于 @item.Record.Time.ToString("g")</div>
+										</div>
+									</div>
+
 								</div>
-							</div>
-
+							}
 						</div>
-					}
-				</div>
 
-				<br />
-				<pager source="@Model.UserRecords" item-default-link="@PagerItemLinkGenerators.QueryName("userPage")" />
+						<br/>
+						<pager source="@Model.UserRecords" item-default-link="@PagerItemLinkGenerators.QueryName("userPage")"/>
+
+					</div>
+				}
+				else
+				{
+					<div class="card-body">
+						<div class="card-text text-muted text-center">目前还没有任何玩家获得这个成就</div>
+					</div>
+				}
 
 			</div>
-		}
-		else
-		{
-			<div class="card-body">
-				<div class="card-text text-muted text-center">目前还没有任何玩家获得这个成就</div>
-			</div>
-		}
+		</div>
 
 	</div>
+	
 </div>

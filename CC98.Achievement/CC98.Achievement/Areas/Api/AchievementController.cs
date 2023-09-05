@@ -94,10 +94,23 @@ public class AchievementController : ControllerBase
 				 State = i.State
 			 }).ToArray();
 
+		var config = new BulkConfig();
+
 		// 重新排序
 		if (info.Options.ReorderItems)
 		{
 			newItems.ForEach((item, index) => item.SortOrder = index);
+		}
+		// 否则，更新时忽略排序顺序
+		else
+		{
+			config.PropertiesToExcludeOnUpdate = new() { nameof(AchievementItem.SortOrder) };
+		}
+
+		// 如果删除未列出项目，则设置分类名为对比条件
+		if (info.Options.RemoveAllNonListedItems)
+		{
+			config.SetSynchronizeFilter<AchievementItem>(i => i.CategoryName == currentCategory.CodeName);
 		}
 
 		try
@@ -105,14 +118,11 @@ public class AchievementController : ControllerBase
 			// 如果要求删除未列出项目，则执行删除，删除同步的标准为当前 categoryName 匹配
 			if (info.Options.RemoveAllNonListedItems)
 			{
-				await DbContext.BulkInsertOrUpdateOrDeleteAsync(newItems,
-					bulkAction: b =>
-						b.SetSynchronizeFilter<AchievementItem>(i => i.CategoryName == currentCategory.CodeName),
-					cancellationToken: cancellationToken);
+				await DbContext.BulkInsertOrUpdateOrDeleteAsync(newItems, config, cancellationToken: cancellationToken);
 			}
 			else
 			{
-				await DbContext.BulkInsertOrUpdateAsync(newItems, cancellationToken: cancellationToken);
+				await DbContext.BulkInsertOrUpdateAsync(newItems, config, cancellationToken: cancellationToken);
 			}
 
 			await DbContext.BulkSaveChangesAsync(cancellationToken: cancellationToken);
