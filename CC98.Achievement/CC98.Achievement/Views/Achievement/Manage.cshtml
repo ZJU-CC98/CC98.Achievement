@@ -1,5 +1,10 @@
-﻿@using CC98.Achievement.Controllers
-@model IPagedList<AchievementItem>
+﻿@model IPagedList<AchievementItem>
+@{
+	ViewBag.Title = "成就管理";
+	var search = (AchievementSearchModel)ViewBag.Search;
+}
+
+<partial name="_SearchPartial" model="search" />
 
 @if (Model.Any())
 {

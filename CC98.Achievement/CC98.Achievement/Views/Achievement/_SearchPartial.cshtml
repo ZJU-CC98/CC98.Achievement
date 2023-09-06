@@ -1,0 +1,29 @@
+﻿@model AchievementSearchModel
+<nav class="navbar bg-body-tertiary">
+	<form method="get" role="search" class="row mx-2 g-2 align-items-center">
+		<div class="col-auto">
+			<label class="col-form-label" asp-for="CategoryCodeName">分类</label>
+		</div>
+		<div class="col-auto">
+			<select class="form-select"></select>
+		</div>
+		<div class="col-auto">
+			<label class="col-form-label" asp-for="CodeName">代码名称</label>=
+		</div>
+		<div class="col-auto">
+			<input asp-for="CodeName" class="form-control" type="search"/>
+		</div>
+		<div class="col-auto">
+			<label class="col-form-label" asp-for="Keyword">显示名称</label>
+		</div>
+		<div class="col-auto">
+			<input asp-for="Keyword" class="form-control" type="search"/>
+		</div>
+		<div class="col-auto">
+			<label class="col-form-label" asp-for="State">类型</label>
+		</div>
+		<div class="col-auto">
+			<select asp-enum-for="State" class="form-select" asp-text-source="Name" asp-option-label="(全部)"></select>
+		</div>
+	</form>
+</nav>

@@ -2,6 +2,7 @@
 using CC98.Achievement.Models;
 
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -207,19 +208,54 @@ public class AchievementController : Controller
 	/// <summary>
 	/// 管理成就列表。
 	/// </summary>
+	/// <param name="search">搜索条件。</param>
 	/// <param name="page">页码。</param>
 	/// <param name="cancellationToken">用于取消操作的令牌。</param>
 	/// <returns>操作结果。</returns>
 	[Authorize(Policies.Edit)]
-	public async Task<IActionResult> Manage(int page = 1, CancellationToken cancellationToken = default)
+	public async Task<IActionResult> Manage(AchievementSearchModel search, int page = 1, CancellationToken cancellationToken = default)
 	{
-		var item =
-			(from i in DbContext.Items
-			 orderby i.CategoryName, i.CodeName
-			 select i)
-			.Include(i => i.Category);
+		var items =
+			from i in DbContext.Items
+			select i;
 
-		return View(await item.ToPagedListAsync(20, page, cancellationToken));
+
+		if (!string.IsNullOrEmpty(search.CategoryCodeName))
+		{
+			items = from i in items
+					where i.CategoryName == search.CategoryCodeName
+					select i;
+		}
+
+		if (!string.IsNullOrEmpty(search.CodeName))
+		{
+			items = from i in items
+					where i.CodeName.Contains(search.CodeName)
+					select i;
+		}
+
+		if (!string.IsNullOrEmpty(search.Keyword))
+		{
+			items = from i in items
+					where i.DisplayName.Contains(search.Keyword)
+					select i;
+		}
+
+		if (search.State != null)
+		{
+			items = from i in items
+					where i.State == search.State
+					select i;
+		}
+
+		var result =
+			(from i in items
+			 orderby i.CategoryName, i.SortOrder, i.CodeName
+			 select i).Include(p => p.Category);
+
+
+		ViewBag.Search = search;
+		return View(await result.ToPagedListAsync(20, page, cancellationToken));
 
 	}
 

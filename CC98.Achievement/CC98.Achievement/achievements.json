@@ -1,7 +1,7 @@
 [
 	{
-		"CodeName": "first-visit",
-		"DisplayName": "初来乍到",
+		"CodeName": "1-item",
+		"DisplayName": "初出茅庐",
 		"Description": "欢迎来到 CC98 成就系统。",
 		"IconUri": null,
 		"Hint": "首次登录 CC98 成就系统后自动获得。",
@@ -11,7 +11,7 @@
 	},
 
 	{
-		"CodeName": "10-items",
+		"CodeName": "10-item",
 		"DisplayName": "驾轻就熟",
 		"Description": "获得总计 10 项不同的成就。",
 		"Hint": "获得总计 10 项不同的成就。",
@@ -22,7 +22,7 @@
 	},
 
 	{
-		"CodeName": "100-items",
+		"CodeName": "100-item",
 		"DisplayName": "身经百战",
 		"Description": "获得总计 100 项不同的成就。",
 		"Hint": "获得总计 100 项不同的成就。",

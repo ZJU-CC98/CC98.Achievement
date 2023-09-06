@@ -1,0 +1,11 @@
+﻿@model IEnumerable<AchievementCategory>
+@{
+	var aspFor = (ModelExpression)ViewBag.AspFor;
+	var allowNull = (bool)ViewBag.AllowNull;
+
+	var selectList = new List<AchievementCategory>();
+
+	var list = new SelectList(Model, nameof(AchievementCategory.CodeName), nameof(AchievementCategory.DisplayName), aspFor.Model);
+}
+
+<select name="@Html.Name(aspFor.Name)" asp-items="@list"></select>
