@@ -1,0 +1,10 @@
+﻿@using Sakura.AspNetCore.Localization
+@using CC98
+@model CategorySummaryInfo
+@inject AppSettingService<SystemSetting> SystemSettingService
+@{
+	var categoryName = (string?)ViewBag.Category;
+	var userInfo = Model as CategoryUserSummaryInfo;
+
+	var appIconUri = Model.Item.AppIconUri ?? SystemSettingService.Current.DefaultAppIconUri;
+}

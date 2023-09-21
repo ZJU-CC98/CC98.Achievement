@@ -10,6 +10,7 @@ namespace CC98.Achievement.Data;
 /// 表示可颁发成就的一个类别。
 /// </summary>
 [Index(nameof(AppId), IsUnique = true)]
+[Index(nameof(DisplayName))]
 public class AchievementCategory
 {
 	/// <summary>
@@ -36,6 +37,24 @@ public class AchievementCategory
 	/// </summary>
 	[Range(0, int.MaxValue)]
 	public int UserCount { get; set; }
+
+	/// <summary>
+	/// 该分类的应用主图标。
+	/// </summary>
+	[Url]
+	public string? AppIconUri { get; set; } = null!;
+
+	/// <summary>
+	/// 该分类使用的默认图标。如果设置为 <c>null</c>，则使用系统全局默认图标。
+	/// </summary>
+	[Url]
+	public string? DefaultIconUri { get; set; }
+
+	/// <summary>
+	/// 该分类使用的默认隐藏图标。如果设置为 <c>null</c>，则使用系统全局隐藏模板定义的图标。
+	/// </summary>
+	[Url]
+	public string? DefaultHideIconUri { get; set; }
 
 	/// <summary>
 	/// 获取或设置该颁发者关联的成就的集合。

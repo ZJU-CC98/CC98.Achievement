@@ -5,7 +5,7 @@
 
 @if (Model.Any())
 {
-	<table class="table table-hover table-striped align-middle">
+	<table class="ui definition table">
 		<thead>
 			<tr>
 				<th>名称</th>
@@ -17,12 +17,12 @@
 			@foreach (var item in Model)
 			{
 				<tr data-id="@item.CodeName" data-name="@item.DisplayName">
-					<th><a asp-controller="Category" asp-action="Detail" asp-route-id="@item.AppId">@item.DisplayName</a></th>
+					<td><a asp-controller="Category" asp-action="Detail" asp-route-id="@item.AppId">@item.DisplayName</a></td>
 					<td><code>@item.AppId</code></td>
 					<td>
-						<div class="btn-group btn-group-sm">
-							<a asp-controller="Category" asp-action="Edit" asp-route-codeName="@item.CodeName" class="btn btn-outline-secondary">编辑</a>
-							<button type="button" class="btn btn-danger" onclick="doDelete(this);">删除</button>
+						<div class="ui mini buttons">
+							<a asp-controller="Category" asp-action="Edit" asp-route-codeName="@item.CodeName" class="ui button">编辑</a>
+							<button type="button" class="ui negative button" onclick="doDelete(this);">删除</button>
 						</div>
 					</td>
 				</tr>
@@ -37,28 +37,22 @@ else
 	<div class="text-center text-muted">目前系统中还没有注册任何成就分类。</div>
 }
 
-<hr />
+<div class="ui divider"></div>
 
-<a asp-controller="Category" asp-action="Create" class="btn btn-primary">创建分类</a>
+<a asp-controller="Category" asp-action="Create" class="ui primary button">创建分类</a>
 
-<form asp-controller="Category" asp-action="Delete" method="post" asp-antiforgery="true">
+<form class="ui form" asp-controller="Category" asp-action="Delete" method="post" asp-antiforgery="true">
 	<input id="delete-app-id-input" type="hidden" name="id" />
-	<div id="delete-app-modal" class="modal fade" tabindex="-1">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title">删除应用警告</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="关闭"></button>
-				</div>
-				<div class="modal-body">
-					<p>你确定要删除分类<q><strong id="delete-app-name-text"></strong></q>吗？这个操作不可取消。如果要确定执行这个操作，请单击下方的<q>删除分类</q>按钮。否则请单击<q>关闭</q>按钮，或点击对话框外的任何位置。</p>
-					<p>请注意，删除分类后，原来的分类成就也将被一并删除并不可恢复。重新创建分类后，用户必须重新获得这些成就。</p>
-				</div>
-				<div class="modal-footer">
-					<button type="submit" class="btn btn-danger">删除分类</button>
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-				</div>
-			</div>
+	<div id="delete-app-modal" class="ui small modal" tabindex="-1">
+		<i class="close icon"></i>
+		<div class="header">删除应用警告</div>
+		<div class="content">
+			<p>你确定要删除分类<q><strong id="delete-app-name-text"></strong></q>吗？这个操作不可取消。如果要确定执行这个操作，请单击下方的<q>删除分类</q>按钮。否则请单击<q>关闭</q>按钮，或点击对话框外的任何位置。</p>
+			<p>请注意，删除分类后，原来的分类成就也将被一并删除并不可恢复。重新创建分类后，用户必须重新获得这些成就。</p>
+		</div>
+		<div class="actions">
+			<button type="submit" class="ui negative button">删除分类</button>
+			<button type="button" class="ui button" data-dismiss="modal">关闭</button>
 		</div>
 	</div>
 </form>
@@ -68,15 +62,14 @@ else
 
 	<script type="text/javascript">
 
-		var deleteModal = new bootstrap.Modal('#delete-app-modal');
-
 		function doDelete(ele) {
 
-			var row = ele.closest('tr');
-			document.getElementById('delete-app-id-input').value = row.dataset.id;
-			document.getElementById('delete-app-name-text').innerText = row.dataset.name;
-			
-			deleteModal.show();
+			var row = $(ele).closest('tr');
+
+			$('#delete-app-id-input').val($(row).data('id'));
+			$('#delete-app-name-text').text($(row).data('name'));
+
+			$('#delete-app-modal').modal('show');
 
 		}
 

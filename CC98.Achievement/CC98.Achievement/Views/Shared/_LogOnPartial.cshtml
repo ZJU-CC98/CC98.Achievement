@@ -1,19 +1,14 @@
 ﻿@if (User.Identity is { IsAuthenticated: true })
 {
-	<span class="navbar-text"><strong>@User.Identity.Name</strong></span>
-	<ul class="navbar-nav">
-		<li class="nav-item">
-			<a class="nav-link" href="#" onclick="document.getElementById('log-off-form').submit();">注销</a>
-		</li>
-	</ul>
+	<div class="item">
+		<strong>@User.Identity.Name</strong>
+	</div>
+	<a class="ui item" type="submit" href="#" onclick="$('#log-off-form').submit();">注销</a>
+
 	<form id="log-off-form" class="d-flex" asp-controller="Account" asp-action="LogOff" method="post" asp-antiforgery="true">
 	</form>
 }
 else
 {
-	<ul class="navbar-nav">
-		<li class="nav-item">
-			<a class="nav-link" asp-controller="Account" asp-action="LogOn">登录</a>
-		</li>
-	</ul>
+	<a class="ui item" asp-controller="Account" asp-action="LogOn" asp-route-returnUrl="@Url.Action()">登录</a>
 }

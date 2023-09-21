@@ -8,4 +8,9 @@
 	var list = new SelectList(Model, nameof(AchievementCategory.CodeName), nameof(AchievementCategory.DisplayName), aspFor.Model);
 }
 
-<select name="@Html.Name(aspFor.Name)" asp-items="@list"></select>
+<select class="ui dropdown" name="@Html.Name(aspFor.Name)" asp-items="@list">
+	@if (allowNull)
+	{
+		<option value="">(全部分类)</option>
+	}
+</select>

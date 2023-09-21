@@ -3,11 +3,11 @@
 	var isEdit = (bool?)ViewBag.IsEdit ?? false;
 }
 
-<div class="mb-3">
-	<label class="form-label" asp-for="CodeName">分类标识</label>
-	<input class="form-control" asp-for="CodeName" type="text" readonly="@isEdit" disabled="@isEdit" />
+<div class="field" asp-for="CodeName">
+	<label asp-for="CodeName">分类标识</label>
+	<input asp-for="CodeName" type="text" readonly="@isEdit" disabled="@isEdit" />
 	<span class="text-danger" asp-validation-for="CodeName"></span>
-	<div class="form-text">分类的标识。该标识也作为成就项的前缀，用于区分不同的成就来源。请使用英文字母、数字和横线来定义标识。注意：该字段一旦创建将无法修改。</div>
+	<div class="ui message">分类的标识。该标识也作为成就项的前缀，用于区分不同的成就来源。请使用英文字母、数字和横线来定义标识。注意：该字段一旦创建将无法修改。</div>
 </div>
 
 @if (isEdit)
@@ -15,27 +15,50 @@
 	<input type="hidden" asp-for="CodeName" />
 }
 
-<div class="mb-3">
-	<label class="form-label" asp-for="DisplayName">分类名称</label>
-	<input class="form-control" asp-for="DisplayName" type="text" />
+<div class="field" asp-for="DisplayName">
+	<label asp-for="DisplayName">分类名称</label>
+	<input asp-for="DisplayName" type="text" />
 	<span class="text-danger" asp-validation-for="DisplayName"></span>
-	<div class="form-text">分类的显示名称。用户将在成就系统浏览页面中看到该应用的名称。如果该分类关联到特定应用，则通常应该和应用的实际名称保持一致。</div>
+	<div class="ui message">分类的显示名称。用户将在成就系统浏览页面中看到该应用的名称。如果该分类关联到特定应用，则通常应该和应用的实际名称保持一致。</div>
 </div>
 
-<hr />
+<div class="ui divider"></div>
 
-<div class="mb-3">
-	<label class="form-label" asp-for="AppId">应用授权标识</label>
-	<input class="form-control" asp-for="AppId" type="text" />
+<div class="field" asp-for="DefaultIconUri">
+	<label asp-for="DefaultIconUri">默认成就图标</label>
+	<input asp-for="DefaultIconUri" type="url" placeholder="使用系统默认设置" />
+	<span class="text-danger" asp-validation-for="DefaultIconUri"></span>
+	<div class="ui message">该分类的默认成就图标，当某个具体的成就没有设定图标时，将会使用该图标。如果未设置默认成就图标，则系统将使用全局默认图标。</div>
+</div>
+
+<div class="field" asp-for="DefaultHideIconUri">
+	<label asp-for="DefaultHideIconUri">隐藏成就图标</label>
+	<input asp-for="DefaultHideIconUri" type="text" placeholder="使用系统默认设置" />
+	<span class="text-danger" asp-validation-for="DefaultHideIconUri"></span>
+	<div class="ui message">该分类的隐藏成就图标，对于<q>隐藏的成就</q>，在其被揭示之前将会使用该图标。如果不设置该选项，则会使用系统全局设置隐藏图标。</div>
+</div>
+
+<div class="ui divider"></div>
+
+<div class="field" asp-for="AppIconUri">
+	<label asp-for="AppIconUri">应用图标</label>
+	<input asp-for="AppIconUri" type="text" />
+	<span class="text-danger" asp-validation-for="AppIconUri"></span>
+	<div class="ui message">该分类对应的应用的图标，将会显示在成就系统主页。如果不提供图标，则系统将使用全局默认应用图标。</div>
+</div>
+
+<div class="field" asp-for="AppId">
+	<label asp-for="AppId">应用授权标识</label>
+	<input asp-for="AppId" type="text" />
 	<span class="text-danger" asp-validation-for="AppId"></span>
-	<div class="form-text">该应用在 <a target="_blank" href="https://openid.cc98.org">CC98 登录中心</a>中注册的标识。在业务应用申请登录中心授权后，成就系统将使用该标识确认业务应用的身份。</div>
+	<div class="ui message">该应用在 <a target="_blank" href="https://openid.cc98.org">CC98 登录中心</a>中注册的标识。在业务应用申请登录中心授权后，成就系统将使用该标识确认业务应用的身份。</div>
 </div>
 
-<hr />
+<div class="ui divider"></div>
 
-<div class="mb-3">
-	<label class="form-label" asp-for="UserCount">分类参与人数</label>
-	<input class="form-control" asp-for="UserCount" type="number" min="0" step="1" />
+<div class="field" asp-for="UserCount">
+	<label asp-for="UserCount">分类参与人数</label>
+	<input asp-for="UserCount" type="number" min="0" step="1" />
 	<span class="text-danger" asp-validation-for="UserCount"></span>
-	<div class="form-text">该分类的参与人数，用于计算该类别的成就提供成就达成人数比例。如果设置为<code>0</code>则将禁用计算人数比例功能。由第三方应用接管的分类可通过 API 定时修改该数据。</div>
+	<div class="ui message">该分类的参与人数，用于计算该类别的成就提供成就达成人数比例。如果设置为<code>0</code>则将禁用计算人数比例功能。由第三方应用接管的分类可通过 API 定时修改该数据。</div>
 </div>

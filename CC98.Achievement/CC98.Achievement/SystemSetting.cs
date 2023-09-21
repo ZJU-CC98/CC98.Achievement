@@ -10,6 +10,11 @@ namespace CC98.Achievement;
 public class SystemSetting : IAppSettingWithDefaultValue<SystemSetting>
 {
 	/// <summary>
+	/// 默认的应用图标。
+	/// </summary>
+	[Url] public string DefaultAppIconUri { get; set; } = null!;
+
+	/// <summary>
 	/// 默认成就图标的路径。
 	/// </summary>
 	[Url]

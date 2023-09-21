@@ -9,118 +9,120 @@
 	var userRecords = (IPagedList<AchievementRecord>)ViewBag.UserRecords;
 }
 
+<div class="ui grid">
 
+	<div class="doubling two column row">
 
+		<div class="column">
 
-<div class="row justify-content-center">
+			<form class="ui form" asp-controller="Achievement" asp-action="Edit" method="post" asp-antiforgery="true">
 
-	<div class="col-12 col-sm-9 col-md-6">
+				<input type="hidden" asp-for="CategoryName" />
+				<input type="hidden" asp-for="CodeName" />
 
-		<form asp-controller="Achievement" asp-action="Edit" method="post" asp-antiforgery="true">
-			<input type="hidden" asp-for="CategoryName" />
-			<input type="hidden" asp-for="CodeName" />
-
-			<div class="card mt-3">
-				<div class="card-header">成就信息</div>
 
 				<div class="card-body">
 					<partial name="_EditPartial" />
-					<div class="text-danger" asp-validation-summary="ModelOnly"></div>
 				</div>
 
-				<div class="card-footer">
-					<button type="submit" class="btn btn-primary">修改成就</button>
-					<button type="reset" class="btn btn-outline-secondary">撤销更改</button>
-				</div>
+				<div class="text-danger" asp-validation-summary="ModelOnly"></div>
 
-			</div>
+				<div class="ui divider"></div>
 
-		</form>
-	</div>
 
-	<div class="col-12 col-sm-9 col-md-6">
+				<button type="submit" class="ui primary button">修改成就</button>
+				<button type="reset" class="ui button">撤销更改</button>
 
-		<div class="card mt-3">
-			<div class="card-header">用户获得情况</div>
-			<div class="card-body">
-				<div class="alert alert-warning">本区域的操作和成就基本信息的操作无法同时生效。如果你修改了成就信息，请先提交修改再进行用户获得情况的相关操作。</div>
-			</div>
 
-			@if (userRecords.Any())
-			{
-				<table class="table table-sm table-hover table-striped align-middle p-2">
-					<thead>
-						<tr>
-							<th>用户名</th>
-							<th>状态</th>
-							<th>更新时间 <i class="bi-info-circle help" title="如果成就已完成，该项数据为成就获得的时间。如果成就尚未完成，则该项为成就进度最后更新的时间。"></i></th>
-							<th>进度</th>
-							<th>操作</th>
-						</tr>
-					</thead>
-					<tbody>
-						@foreach (var record in userRecords)
-						{
-							<tr data-user-name="@record.UserName">
-								<th>@record.UserName</th>
-								<td>
-									@if (record.IsCompleted)
-									{
-										<span class="text-success">已完成</span>
-									}
-									else
-									{
-										<span class="text-danger">未完成</span>
-									}
-								</td>
-								<td>
-									@record.Time.ToString("g")
-								</td>
-								<td>
-									@if (record.CurrentValue != null)
-									{
-										<span>@record.CurrentValue.Value</span>
-									}
-									else
-									{
-										<span class="text-muted">无</span>
-									}
-								</td>
-								<td>
-									<div class="btn-group btn-group-sm">
-										<button type="button" class="btn btn-outline-secondary" data-toggle="remote-dialog" data-target="#add-record-modal" data-remote-url="@Url.Action("EditRecord", "Achievement", new {record.CategoryName, record.AchievementName, record.UserName})">编辑</button>
-										<button type="button" class="btn btn-danger" onclick="onDelete(this);">删除</button>
-									</div>
-								</td>
-							</tr>
-						}
-					</tbody>
-				</table>
-				<div class="card-body">
-					<pager source="@userRecords" item-default-link="@PagerItemLinkGenerators.QueryName("userPage")" />
-				</div>
-			}
-			else
-			{
-				<p class="card-text text-center text-muted">目前还没有任何用户获得该成就</p>
-			}
-
-			<div class="card-footer">
-				<div class="d-flex justify-content-between">
-					<button class="btn btn-primary" data-toggle="remote-dialog" data-target="#add-record-modal" data-remote-url="@Url.Action("AddRecord", "Achievement", new { Model.CategoryName, Model.CodeName })">添加获得用户</button>
-					<button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#clear-record-modal">清空获得记录</button>
-				</div>
-			</div>
+			</form>
 		</div>
 
+
+		<div class="column">
+
+			<div class="ui segment">
+
+				<div class="ui large dividing header">用户获得情况</div>
+
+				<div class="ui info message">本区域的操作和成就基本信息的操作无法同时生效。如果你修改了成就信息，请先提交修改再进行用户获得情况的相关操作。</div>
+
+
+				@if (userRecords.Any())
+				{
+					<table class="ui definition table">
+						<thead>
+							<tr>
+								<th>用户名</th>
+								<th>状态</th>
+								<th>更新时间 <i class="bi-info-circle help" title="如果成就已完成，该项数据为成就获得的时间。如果成就尚未完成，则该项为成就进度最后更新的时间。"></i></th>
+								<th>进度</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (var record in userRecords)
+							{
+								<tr data-user-name="@record.UserName">
+									<td>@record.UserName</td>
+									<td>
+										@if (record.IsCompleted)
+										{
+											<i class="ui green check icon"></i>
+										}
+										else
+										{
+											<i class="ui blue clock icon"></i>
+										}
+									</td>
+									<td>
+										@record.Time.ToString("g")
+									</td>
+									<td>
+										@if (record.CurrentValue != null)
+										{
+											<span>@record.CurrentValue.Value</span>
+										}
+										else
+										{
+											<span class="text-muted">无</span>
+										}
+									</td>
+									<td>
+										<div class="ui mini buttons">
+											<button type="button" class="ui button" data-toggle="remote-dialog" data-target="#add-record-modal" data-remote-url="@Url.Action("EditRecord", "Achievement", new {record.CategoryName, record.AchievementName, record.UserName})">编辑</button>
+											<button type="button" class="ui negative button" onclick="onDelete(this);">删除</button>
+										</div>
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+
+					<pager source="@userRecords" item-default-link="@PagerItemLinkGenerators.QueryName("userPage")" />
+				}
+				else
+				{
+					<p class="card-text text-center text-muted">目前还没有任何用户获得该成就</p>
+				}
+
+				<div class="ui divider"></div>
+
+				<button class="ui primary button" data-toggle="remote-dialog" data-target="#add-record-modal" data-remote-url="@Url.Action("AddRecord", "Achievement", new { Model.CategoryName, Model.CodeName })">添加获得用户</button>
+
+				<button class="ui negative button" data-toggle="modal" data-target="#clear-record-modal">清空获得记录</button>
+
+
+
+			</div>
+
+
+
+		</div>
 	</div>
 </div>
 
 
-<div class="modal fade" tabindex="-1" id="add-record-modal">
-	<div class="modal-dialog">
-		<div class="modal-content"></div>
-	</div>
+<div id="add-record-modal">
 </div>
 
 
@@ -132,56 +134,45 @@
 		<input type="hidden" asp-for="CodeName" />
 		<input type="hidden" name="userName" id="delete-user-name-input" />
 
-		<div class="modal fade" tabindex="-1" id="delete-record-modal">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title">删除成就记录警告</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="关闭"></button>
-					</div>
-					<div class="modal-body">
-						<p>你确定要删除用户<q><storng id="delete-user-name-text"></storng></q>的成就记录吗？此操作不可恢复。如果该成就具有进度值，删除记录时也会将其清空。</p>
+		<div class="ui small modal" tabindex="-1" id="delete-record-modal">
+			<i class="close icon"></i>
+			<div class="header">删除成就记录警告</div>
+			<div class="content">
+				<p>你确定要删除用户<q><storng id="delete-user-name-text"></storng></q>的成就记录吗？此操作不可恢复。如果该成就具有进度值，删除记录时也会将其清空。</p>
 
-						<p>
-							如果负责颁发该成就的应用完整记录了用户先前活动数据且定期批量更新成就数据，则用户的成就状态可能会在短时间后自动恢复到删除前的状态，删除成就记录可能无法达到预期效果。在执行该操作前，请联系首先联系应用作者确定成就的更新模式。
-						</p>
+				<p>
+					如果负责颁发该成就的应用完整记录了用户先前活动数据且定期批量更新成就数据，则用户的成就状态可能会在短时间后自动恢复到删除前的状态，删除成就记录可能无法达到预期效果。在执行该操作前，请联系首先联系应用作者确定成就的更新模式。
+				</p>
 
-						<p>如果确定执行该操作，请单击<q>删除记录</q>按钮。否则，请关闭关闭对话框或点击对话框外的任意区域。</p>
-					</div>
-					<div class="modal-footer">
-						<button type="submit" class="btn btn-danger">删除记录</button>
-						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-					</div>
-				</div>
+				<p>如果确定执行该操作，请单击<q>删除记录</q>按钮。否则，请关闭关闭对话框或点击对话框外的任意区域。</p>
 			</div>
+			<div class="actions">
+				<button type="submit" class="ui negative button">删除记录</button>
+				<button type="button" class="ui button" data-dismiss="modal">关闭</button>
+			</div>
+
 		</div>
 	</form>
 
 	<form asp-controller="Achievement" asp-action="ClearRecords" asp-route-categoryName="@Model.CategoryName" asp-route-codeName="@Model.CodeName" method="post" asp-antiforgery="true">
 
-		<div class="modal fade" tabindex="-1" id="clear-record-modal">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title">清空成就记录警告</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="关闭"></button>
-					</div>
-					<div class="modal-body">
-						<p>你确定要清空这个成就的所有获得记录吗？这个操作不可撤销。</p>
+		<div class="ui small modal" tabindex="-1" id="clear-record-modal">
+			<i class="close icon"></i>
+			<div class="header">清空成就记录警告</div>
+			<div class="content">
+				<p>你确定要清空这个成就的所有获得记录吗？这个操作不可撤销。</p>
 
-						<p>
-							如果负责颁发该成就的应用完整记录了每个用户先前活动数据且定期批量更新成就数据，则他们的成就状态可能会在短时间后自动恢复到删除前的状态，删除成就记录可能无法达到预期效果。在执行该操作前，请联系首先联系应用作者确定成就的更新模式。
-						</p>
+				<p>
+					如果负责颁发该成就的应用完整记录了每个用户先前活动数据且定期批量更新成就数据，则他们的成就状态可能会在短时间后自动恢复到删除前的状态，删除成就记录可能无法达到预期效果。在执行该操作前，请联系首先联系应用作者确定成就的更新模式。
+				</p>
 
-						<p>第三方应用自身也具有清空应用成就记录的相关权限。如果是因为应用自身对成就的设定产生变化导致先前的成就记录不再有效，请建议应用作者首先尝试通过自身权限清空成就记录。人工清理成就信息只能作为一种应用自身功能不完整时的备用方案，不应随意使用。</p>
+				<p>第三方应用自身也具有清空应用成就记录的相关权限。如果是因为应用自身对成就的设定产生变化导致先前的成就记录不再有效，请建议应用作者首先尝试通过自身权限清空成就记录。人工清理成就信息只能作为一种应用自身功能不完整时的备用方案，不应随意使用。</p>
 
-						<p>如果确定执行该操作，请单击<q>删除记录</q>按钮。否则，请关闭关闭对话框或点击对话框外的任意区域。</p>
-					</div>
-					<div class="modal-footer">
-						<button type="submit" class="btn btn-danger">删除记录</button>
-						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-					</div>
-				</div>
+				<p>如果确定执行该操作，请单击<q>删除记录</q>按钮。否则，请关闭关闭对话框或点击对话框外的任意区域。</p>
+			</div>
+			<div class="actions">
+				<button type="submit" class="ui negative button">删除记录</button>
+				<button type="button" class="ui button" data-dismiss="modal">关闭</button>
 			</div>
 		</div>
 
@@ -196,19 +187,22 @@
 	{
 	<script asp-authorize-policy="@Policies.Review">
 
-		var deleteRecordModal = new bootstrap.Modal('#delete-record-modal');
-
 
 		function onDelete(ele) {
-			var row = ele.closest('tr');
-			var name = row.dataset.userName;
+
+			var row = $(ele).closest('tr');
+			var name = $(row).data('userName');
+
+			$('#delete-user-name-input').val(name);
+			$('#delete-user-name-text').text(name);
+
+			$('#delete-record-modal').modal('show');
 
 			document.querySelector('#delete-user-name-input').value = name;
 			document.querySelector('#delete-user-name-text').innerText = name;
 
-			deleteRecordModal.show();
 		}
 
 	</script>
 
-}
+	}

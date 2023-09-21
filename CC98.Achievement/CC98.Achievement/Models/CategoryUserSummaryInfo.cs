@@ -8,10 +8,10 @@ public class CategoryUserSummaryInfo : CategorySummaryInfo
 	/// <summary>
 	/// 用户完成的成就数（不包括特殊成就。）
 	/// </summary>
-	public int UserFinishedCount { get; set; }
+	public required int UserFinishedCount { get; set; }
 
 	/// <summary>
 	/// 用户完成的特殊成就数。
 	/// </summary>
-	public int UserSpecialCount { get; set; }
+	public required int UserSpecialCount { get; set; }
 }

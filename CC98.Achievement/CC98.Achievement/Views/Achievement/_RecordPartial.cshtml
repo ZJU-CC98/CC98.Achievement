@@ -3,33 +3,32 @@
 	var editMode = (bool?)ViewBag.EditMode ?? false;
 }
 
-<div class="mb-3">
-	<label asp-for="UserName" class="form-label">用户名</label>
-	<input asp-for="UserName" class="form-control" disabled="@editMode" readonly="@editMode" />
+<div class="field" asp-for="UserName">
+	<label asp-for="UserName">用户名</label>
+	<input asp-for="UserName" disabled="@editMode" readonly="@editMode" />
 	<span asp-validation-for="UserName" class="text-danger"></span>
-	<div class="form-text">要添加成就记录的用户名。添加记录后此项不可修改。如果需要修改成就获得用户，请删除并重新创建新记录。</div>
+	<div class="ui message">要添加成就记录的用户名。添加记录后此项不可修改。如果需要修改成就获得用户，请删除并重新创建新记录。</div>
 </div>
 
-<div class="mb-3">
-	<div class="form-check form-switch">
-		<label class="form-check-label" asp-for="IsCompleted">
-			<input class="form-check-input" asp-for="IsCompleted" type="checkbox" role="switch" /> 成就已完成
-		</label>
+<div class="field" asp-for="IsCompleted">
+	<div class="ui checkbox">
+		<input asp-for="IsCompleted" type="checkbox" />
+		<label asp-for="IsCompleted">成就已完成</label>
 	</div>
 	<span asp-validation-for="IsCompleted" class="text-danger"></span>
-	<div class="form-text">设定该成就是否已经完成。即使成就进度未满也可以强行设定成就为完成状态，但建议将进度和完成状态保持一致。</div>
+	<div class="ui message">设定该成就是否已经完成。即使成就进度未满也可以强行设定成就为完成状态，但建议将进度和完成状态保持一致。</div>
 </div>
 
-<div class="mb-3">
-	<label asp-for="CurrentValue" class="form-label">成就进度</label>
-	<input asp-for="CurrentValue" class="form-control" type="number" min="0" step="1" placeholder="无成就进度" />
+<div class="field" asp-for="CurrentValue">
+	<label asp-for="CurrentValue">成就进度</label>
+	<input asp-for="CurrentValue" type="number" min="0" step="1" placeholder="无成就进度" />
 	<span asp-validation-for="CurrentValue" class="text-danger"></span>
-	<div class="form-text">如果启用了成就进度，则该值用于记录用户的当前进度；如果未启用进度，则该值无意义。</div>
+	<div class="ui message">如果启用了成就进度，则该值用于记录用户的当前进度；如果未启用进度，则该值无意义。</div>
 </div>
 
-<div class="mb-3">
-	<label asp-for="Time" class="form-label">更新时间</label>
-	<input asp-for="Time" class="form-control" type="datetime-local" />
+<div class="field" asp-for="Time">
+	<label asp-for="Time">更新时间</label>
+	<input asp-for="Time" type="datetime-local" />
 	<span asp-validation-for="Time" class="text-danger"></span>
-	<div class="form-text">对于已完成的成就，该数值为完成时间；对于尚未完成的成就，该数值为进度上次更新的时间。时间会显示在用户的成就一览主页，也会影响用户在所有完成用户列表中的排序。</div>
+	<div class="ui message">对于已完成的成就，该数值为完成时间；对于尚未完成的成就，该数值为进度上次更新的时间。时间会显示在用户的成就一览主页，也会影响用户在所有完成用户列表中的排序。</div>
 </div>

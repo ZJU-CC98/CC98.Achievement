@@ -8,13 +8,15 @@
 
 @if (Model.Any())
 {
-	<table class="table table-hover table-striped align-middle">
+	<table class="ui definition table">
 		<thead>
 			<tr>
 				<th>名称</th>
 				<th>标识</th>
 				<th>分类</th>
 				<th>类型</th>
+				<th>计数</th>
+				<th>动态</th>
 				<th>操作</th>
 			</tr>
 		</thead>
@@ -22,29 +24,38 @@
 			@foreach (var item in Model)
 			{
 				<tr>
-					<th>@item.DisplayName</th>
+					<td>@item.DisplayName</td>
 					<td><code>@item.CodeName</code></td>
 					<td>
 						<span>@item.Category.DisplayName</span>
 					</td>
 					<td>
-						@switch (item.State)
+						<span><enum-item-display-text value="@item.State" text-source="ShortName" /></span>
+					</td>
+					<td>
+						@if (item.MaxValue != null)
 						{
-							case AchievementState.Normal:
-								<span class="text-success">普通</span>
-								break;
-							case AchievementState.Hidden:
-								<span class="text-warning">隐藏</span>
-								break;
-							case AchievementState.Special:
-								<span class="text-danger">特殊</span>
-								break;
+							<span>@item.MaxValue</span>
+						}
+						else
+						{
+							<span class="ui gray text">无</span>
 						}
 					</td>
 					<td>
-						<div class="btn-group btn-group-sm">
-							<a asp-controller="Achievement" asp-action="Edit" asp-route-category="@item.CategoryName" asp-route-name="@item.CodeName" class="btn btn-outline-secondary">编辑</a>
-							<button type="button" class="btn btn-danger">删除</button>
+						@if (item.IsDynamic)
+						{
+							<span class="ui negative text">是</span>
+						}
+						else
+						{
+							<span class="ui text">否</span>
+						}
+					</td>
+					<td>
+						<div class="ui mini buttons">
+							<a asp-controller="Achievement" asp-action="Edit" asp-route-category="@item.CategoryName" asp-route-name="@item.CodeName" class="ui button">编辑</a>
+							<button type="button" class="ui negative button">删除</button>
 						</div>
 					</td>
 				</tr>
@@ -59,5 +70,5 @@ else
 	<div class="text-center text-muted">目前系统中还没有任何成就</div>
 }
 
-<hr />
-<a asp-controller="Achievement" asp-action="Create" class="btn btn-primary">创建新成就</a>
+<div class="ui divider"></div>
+<a asp-controller="Achievement" asp-action="Create" class="ui primary button">创建新成就</a>

@@ -5,23 +5,26 @@
 	ViewBag.IsEdit = true;
 }
 
-<div class="alert alert-info">如果你希望修改分类标识，请删除当前分类并重新创建新项。</div>
+<div class="ui info message">如果你希望修改分类标识，请删除当前分类并重新创建新项。</div>
 
-<form asp-controller="Category" asp-action="Edit" method="post" asp-antiforgery="true">
+<form class="ui form" asp-controller="Category" asp-action="Edit" method="post" asp-antiforgery="true">
 
 	<input type="hidden" asp-for="CodeName" />
 
-	<div class="row justify-content-center">
-		<div class="col-12 col-sm-9 col-md-6">
+	<div class="ui grid">
+		<div class="doubling two column centered row">
+			<div class="column">
 
-			<partial name="_EditPartial" />
+				<partial name="_EditPartial"/>
 
+				<div class="ui divider"></div>
 
-			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+				<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-			<button type="submit" class="btn btn-primary">更改分类</button>
-			<button type="reset" class="btn btn-outline-secondary">清空填写</button>
+				<button type="submit" class="ui primary button">更改分类</button>
+				<button type="reset" class="ui button">清空填写</button>
 
+			</div>
 		</div>
 	</div>
 </form>

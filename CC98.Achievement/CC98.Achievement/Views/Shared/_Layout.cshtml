@@ -1,11 +1,16 @@
-﻿<!DOCTYPE html>
+﻿@{
+	ViewBag.PageTitle ??= ViewBag.Title;
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>@ViewBag.PageTitle - CC98 成就系统</title>
-	<link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
-	<link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
+
+	<link rel="icon" href="~/icon.svg" />
+
+	<link rel="stylesheet" href="~/lib/semantic-ui/semantic.min.css" />
 	<link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
 
 	@await RenderSectionAsync("Header", false)
@@ -13,52 +18,50 @@
 </head>
 <body>
 	<header>
-		<nav class="navbar navbar-expand-md bg-light border-bottom box-shadow mb-3">
-			<div class="container">
-				<a class="navbar-brand" asp-controller="Home" asp-action="Index">CC98 成就系统</a>
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-						aria-expanded="false" aria-label="切换导航菜单">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-				<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-					<ul class="navbar-nav me-auto flex-grow-1">
-						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="" asp-controller="Achievement" asp-action="Index">成就一览</a>
-						</li>
 
-						<li class="nav-item dropdown">
-							<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="False">管理</a>
-							<ul class="dropdown-menu">
-								<li><a class="dropdown-item" asp-controller="Achievement" asp-action="Manage">成就</a></li>
-								<li><a class="dropdown-item" asp-controller="Category" asp-action="Manage">分类</a></li>
+		<div class="ui menu">
+			<div class="ui container">
+				<div class="header item">CC98 成就系统</div>
+				<a class="item" asp-controller="Achievement" asp-action="Index">成就一览</a>
+				<div class="ui dropdown item" asp-authorize-policy="@Policies.Edit">
+					<span class="text">管理</span>
+					<i class="dropdown icon"></i>
+					<div class="menu">
 
-								<authorize policy="@Policies.Admin">
-									<li><hr class="dropdown-divider" /></li>
-									<li><a class="dropdown-item" asp-controller="Manage" asp-action="Index">系统管理</a></li>
-									<li><a class="dropdown-item" asp-controller="Manage" asp-action="SystemSetting">系统设置</a></li>
-								</authorize>
+						<a class="item" asp-controller="Achievement" asp-action="Manage">成就</a>
+						<a class="item" asp-controller="Category" asp-action="Manage">分类</a>
 
-							</ul>
-						</li>
+						<authorize policy="@Policies.Admin">
+							<div class="ui divider"></div>
+							<a class="item" asp-controller="Manage" asp-action="SystemSetting">系统设置</a>
+						</authorize>
 
-					</ul>
+					</div>
+				</div>
+
+				<div class="right menu">
 					<partial name="_LogOnPartial" />
 				</div>
+
 			</div>
-		</nav>
+
+		</div>
 	</header>
-	<div class="container">
-		<main role="main" class="pb-3">
+	<div class="ui main container">
+		<main role="main">
 			@RenderBody()
 		</main>
 	</div>
 
-	<footer class="border-top footer text-muted">
-		<div class="container text-center">
-			<small>&copy; 2022 - CC98 成就系统</small>
+	<footer>
+		<div class="ui divider"></div>
+		<div class="ui container center aligned">
+			<span>&copy; 2023 - CC98 成就系统</span>
 		</div>
 	</footer>
-	<script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+	<script src="~/lib/jquery/jquery.min.js"></script>
+	<script src="~/lib/semantic-ui/semantic.min.js"></script>
 	<script src="~/js/site.js" asp-append-version="true"></script>
 
 	@await RenderSectionAsync("Scripts", false)

@@ -18,7 +18,7 @@ public class AchievementSearchModel
 	/// <summary>
 	/// 名称关键字。
 	/// </summary>
-	public string Keyword { get; set; }
+	public string? Keyword { get; set; }
 
 	/// <summary>
 	/// 成就类型。

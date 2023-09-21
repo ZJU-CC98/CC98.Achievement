@@ -1,0 +1,31 @@
+﻿@model IEnumerable<CategorySummaryInfo>
+@{
+	ViewBag.Title = "摘要";
+}
+
+<div class="ui six centered stackable center aligned cards">
+
+	@foreach (var item in Model)
+	{
+		<a class="ui card" asp-controller="Achievement" asp-action="List" asp-route-category="@item.Item.CodeName">
+			<img class="ui fluid image" src="@item.Item.AppIconUri" alt="应用图标" />
+			<div class="center aligned content">
+				<div class="blue header">@item.Item.DisplayName</div>
+				<div class="description">
+					<div class="ui one statistics">
+						<div class=" statistic">
+							<div class="value">@item.VisibleAchievementCount</div>
+							<div class="label">成就数</div>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+			<div class="extra">
+				<i class="users icon"></i> @item.Item.UserCount 名用户正在参与
+			</div>
+
+		</a>
+	}
+
+</div>

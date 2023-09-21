@@ -1,0 +1,48 @@
+﻿@model IEnumerable<CategoryUserSummaryInfo>
+@{
+	ViewBag.Title = "摘要";
+}
+
+<div class="ui centered four doubling cards">
+
+	@foreach (var item in Model)
+	{
+		var statItemCount = item.UserSpecialCount > 0 ? "three" : "two";
+
+		<a class="card" asp-controller="Achievement" asp-action="List" asp-route-category="@item.Item.CodeName">
+			<div class="ui basic segment">
+				<img class="ui centered small image" src="@item.Item.AppIconUri" alt="应用图标"/>
+			</div>
+			<div class="center aligned content">
+				<div class="header">@item.Item.DisplayName</div>
+				<div class="description">
+					<div class="ui small @statItemCount statistics">
+						<div class="statistic">
+							<div class="value">@item.UserFinishedCount</div>
+							<div class="label">完成</div>
+						</div>
+						<div class="statistic">
+							<div class="value">@item.VisibleAchievementCount</div>
+							<div class="label">总数</div>
+						</div>
+						@if (item.UserSpecialCount > 0)
+						{
+							<div class="green statistic">
+								<div class="value">+@item.UserSpecialCount</div>
+								<div class="label">特殊</div>
+							</div>
+						}
+
+					</div>
+				</div>
+			</div>
+
+			<div class="extra">
+				<i class="users icon"></i> @item.Item.UserCount 名用户正在参与
+			</div>
+
+
+		</a>
+	}
+
+</div>

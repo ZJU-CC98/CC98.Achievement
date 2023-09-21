@@ -17,7 +17,7 @@ namespace CC98.Achievement.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.5")
+                .HasAnnotation("ProductVersion", "7.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -28,12 +28,21 @@ namespace CC98.Achievement.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
+                    b.Property<string>("AppIconUri")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("AppId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("DefaultHideIconUri")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DefaultIconUri")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("DisplayName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("UserCount")
                         .HasColumnType("int");
@@ -43,6 +52,8 @@ namespace CC98.Achievement.Migrations
                     b.HasIndex("AppId")
                         .IsUnique()
                         .HasFilter("[AppId] IS NOT NULL");
+
+                    b.HasIndex("DisplayName");
 
                     b.ToTable("Categories");
                 });

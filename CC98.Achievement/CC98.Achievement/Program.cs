@@ -92,7 +92,8 @@ builder.Services.AddAuthorization(options =>
 });
 
 // 操作消息
-builder.Services.AddSingleton<IOperationMessageHtmlGenerator, Bootstrap5MessageHtmlGenerator>();
+builder.Services.AddSingleton<IOperationMessageLevelClassMapper, SemanticUIMessageLevelClassMapper>();
+builder.Services.AddSingleton<IOperationMessageHtmlGenerator, SemanticUIMessageHtmlGenerator>();
 builder.Services.AddOperationMessages();
 
 // TempData 增强
@@ -101,8 +102,12 @@ builder.Services.AddEnhancedTempData(options =>
 	options.EnableHtmlContentSerialization();
 });
 
+
 // 分页功能
+builder.Services.AddTransient<IPagerHtmlGenerator, SemanticUIPagerGenerator>();
 builder.Services.AddBootstrapPagerGenerator(options => options.ConfigureDefault());
+
+
 
 // 后台服务
 builder.Services.AddSingleton<AchievementBackService>();

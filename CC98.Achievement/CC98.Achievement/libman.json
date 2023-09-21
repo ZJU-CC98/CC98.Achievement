@@ -9,6 +9,14 @@
 		{
 			"library": "bootstrap-icons@1.10.5",
 			"destination": "wwwroot/lib/bootstrap-icons/"
+		},
+		{
+			"library": "semantic-ui@2.5.0",
+			"destination": "wwwroot/lib/semantic-ui/"
+		},
+		{
+			"library": "jquery@3.7.1",
+			"destination": "wwwroot/lib/jquery"
 		}
 	]
 }

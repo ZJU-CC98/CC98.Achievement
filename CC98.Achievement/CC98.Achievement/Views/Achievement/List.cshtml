@@ -1,0 +1,26 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using Sakura.AspNetCore.Mvc.Internal
+@model IPagedList<AchievementAndUserRecordInfo>
+@inject IViewLocalizer Localizer
+@{
+	var category = (AchievementCategory)ViewBag.Category;
+	ViewBag.Title = Localizer["成就一览 - {0}", category.DisplayName];
+}
+
+@if (Model.Any())
+{
+	<div class="ui three stackable raised cards">
+		@foreach (var item in Model)
+		{
+			<partial name="_ItemPartial" model="@item" />
+		}
+	</div>
+	
+	<div class="ui hidden divider"></div>
+
+	<pager />
+}
+else
+{
+	<div class="text-center text-muted">这里没有可以显示的项目</div>
+}

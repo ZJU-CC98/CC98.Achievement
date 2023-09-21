@@ -2,7 +2,8 @@
 @model AchievementAndUserRecordInfo
 @inject AppSettingService<SystemSetting> AppSettingService
 @{
-	var contentElementId = $"popover-content-{Model.Item.CategoryName}-{Model.Item.CodeName}";
+	// 分类信息
+	var category = (AchievementCategory)ViewBag.Category;
 
 	var borderClasses = new Dictionary<string, bool>
 			{
@@ -22,100 +23,111 @@
 
 	// 是否隐藏，隐藏内容会用隐藏模板替代
 	var shouldHide = Model.Item.State == AchievementState.Hidden && !isCompleted;
-	var itemData = shouldHide ? AppSettingService.Current.HiddenItemTemplate : Model.Item;
+
+	// 实际要显示的数据
+	var itemData =
+		shouldHide
+			? AppSettingService.Current.HiddenItemTemplate
+			: Model.Item;
+
+	// 弹出页的元素 ID
+	var popoverElementId =
+		shouldHide
+			? null
+			: $"popover-content-{Model.Item.CategoryName}-{Model.Item.CodeName}";
+
 
 	// 记录对象，用于子模板
 	ViewBag.Record = Model.Record!;
+
+	// 成就底色
+	var cardColor = Model.Item.State switch
+	{
+		AchievementState.Hidden => "purple",
+		AchievementState.Special => "yellow",
+		_ => "teal"
+	};
+
+	if (!isCompleted)
+	{
+		cardColor = string.Empty;
+	}
 }
-<div class="col mb-3">
-	<div class="card h-100" asp-conditional-classes="borderClasses" data-bs-toggle="popover" data-bs-title="@itemData.DisplayName" data-bs-html="true" data-bs-trigger="hover" data-bs-content-id="@contentElementId">
 
-		@if (!shouldHide)
+
+<div class="special card @cardColor">
+
+	<div class="middle aligned content">
+		<img class="ui left floated tiny image" asp-conditional-class-gray="@(!isCompleted)" src="@GetRealIconUri(itemData, category, shouldHide)" alt="成就图标" />
+		<div class="header">@itemData.DisplayName</div>
+		<div class="description">@itemData.Description</div>
+
+	</div>
+
+
+	@if (Model.Record != null)
+	{
+		switch (Model.CompleteState)
 		{
-			// 如果隐藏则不显示链接
-			<a asp-controller="Achievement" asp-action="Detail" asp-route-category="@Model.Item.CategoryName" asp-route-name="@Model.Item.CodeName" class="stretched-link"></a>
-		}
+			case AchievementCompleteState.Completed:
 
-		<div class="card-body p-0">
-
-			<div class="d-flex">
-				<div class="flex-shrink-0">
-					<img asp-conditional-class-gray="@(!isCompleted)" src="@GetRealIconUri(itemData)" class="m-2" style="max-width: 64px; max-height: 64px;" alt="成就图标" />
-				</div>
-				<div class="flex-grow-1">
-					<div class="d-flex justify-content-between align-items-center m-2">
-						<h5 class="m-0"><strong>@itemData.DisplayName</strong></h5>
-
-						@switch (itemData.State)
-						{
-							case AchievementState.Normal:
-								break;
-							case AchievementState.Hidden:
-								<span class="badge bg-warning help" title="这是一个隐藏成就。没有获得这个成就的用户将无法看到它的详细信息。">隐藏</span>
-								break;
-							case AchievementState.Special:
-								<span class="badge bg-danger help" title="这是一个特殊成就。没有获得这个成就的用户将无法在列表中看到它。">特殊</span>
-								break;
-						}
-
-					</div>
-					<hr class="m-0" />
-					<div class="m-2">@itemData.Description</div>
-				</div>
-			</div>
-		</div>
-
-
-		<div class="card-footer d-flex" asp-conditional-classes="@footerClasses">
-			@if (Model.Record != null)
-			{
-				if (Model.Record.IsCompleted)
+				switch (itemData.State)
 				{
-					<small>
-						<i class="bi-check-circle"></i>
-						<span>获得于 @Model.Record.Time.ToString("g")</span>
-					</small>
-				}
-				else
-				{
-					<div class="d-flex flex-grow-1 justify-content-between align-items-center">
-						<small class="flex-grow-0">
-							<span class="text-primary">正在获得</span>
-						</small>
-						<div class="progress bg-white flex-grow-1 ms-2" role="progressbar" aria-valuenow="@Model.Record.CurrentValue" aria-valuemax="@Model.Item.MaxValue">
-							<div class="progress-bar overflow-visible" data-toggle="progress" data-now-value="@Model.Record.CurrentValue" data-max-value="@Model.Item.MaxValue">
-							</div>
+					case AchievementState.Special:
+						<div class="ui yellow right corner label">
+							<i class="star icon"></i>
 						</div>
-					</div>
-
-
-
-
+						break;
+					case AchievementState.Hidden:
+						<div class="ui purple right corner label">
+							<i class="lightbulb icon"></i>
+						</div>
+						break;
 				}
-			}
-			else
-			{
-				<small class="text-muted">尚未获得</small>
-			}
+
+				@*<div class="ui teal right corner label">
+	<i class="check icon"></i>
+	</div>*@
+
+				break;
+			case AchievementCompleteState.Progress:
+
+				@*<div class="ui blue right corner label">
+	<i class="clock icon"></i>
+	</div>*@
 
 
-		</div>
+				<div class="ui bottom blue attached progress" data-value="@Model.Record.CurrentValue" data-total="@Model.Item.MaxValue">
+					<div class="bar"></div>
+				</div>
+
+				break;
+		}
+	}
 
 
-	</div>
+	@if (Model is { Record: not null, CompleteState: AchievementCompleteState.Progress })
+	{
 
-	@*弹出框内容，隐藏*@
-	<div class="visually-hidden">
-		<div id="@contentElementId">
-			<partial name="_DetailPopover" model="@itemData" />
-		</div>
-	</div>
+	}
+
 </div>
 
 @functions
 {
-	string GetRealIconUri(AchievementBaseInfo item)
+	/// <summary>
+	/// 获取成就项需要显示的实际图标。
+	/// </summary>
+	/// <param name="item">要显示的成就项目。</param>
+	/// <param name="category">成就项目对应的分类。</param>
+	/// <param name="isHidden">该项目是否隐藏</param>
+	/// <returns>实际显示项目的 URL。</returns>
+	private string GetRealIconUri(AchievementItem item, AchievementCategory category, bool isHidden)
 	{
-		return item.IconUri ?? AppSettingService.Current.DefaultIconUri;
+		return !isHidden
+			// 未隐藏项目：实际图标 -> 分类默认图标 -> 全局默认图标
+			? item.IconUri ?? category.DefaultIconUri ?? AppSettingService.Current.DefaultIconUri
+			// 隐藏项目：分类隐藏图标 -> 全局默认隐藏模板图标 -> 全局默认图标
+			: category.DefaultHideIconUri ?? AppSettingService.Current.HiddenItemTemplate.IconUri ?? AppSettingService.Current.DefaultIconUri;
 	}
 }

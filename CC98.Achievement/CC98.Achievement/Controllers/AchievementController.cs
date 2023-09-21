@@ -52,28 +52,177 @@ public class AchievementController : Controller
 	private IDynamicHtmlLocalizer<AchievementController> Localizer { get; }
 
 	/// <summary>
-	/// 展示成就系统主页。
+	/// 显示成就系统主页。
 	/// </summary>
-	/// <param name="category">如果该参数不为 <c>null</c> 则用户表示选中了特定分类。</param>
-	/// <param name="page">要显示的页码。</param>
 	/// <param name="cancellationToken">用于取消操作的令牌。</param>
 	/// <returns>操作结果。</returns>
-	public async Task<IActionResult> Index(string? category = null, int page = 1,
-		CancellationToken cancellationToken = default)
+	public async Task<IActionResult> Index(CancellationToken cancellationToken)
 	{
+		// 当前用户名
 		var userName = User.Identity?.Name;
 
+		// 用户未登录
+		if (string.IsNullOrEmpty(userName))
+		{
+			// 去掉所有特殊成就
+			var countItems =
+				from i in DbContext.Items.AsNoTracking()
+				where i.State != AchievementState.Special
+				select i;
+
+			//
+			var items =
+				from c in DbContext.Categories.AsNoTracking()
+				join i in countItems
+					on c.CodeName equals i.CategoryName into g
+				select new CategorySummaryInfo
+				{
+					Item = c,
+					VisibleAchievementCount = g.Count()
+
+				};
+
+			return View("IndexNoUser", await items.ToArrayAsync(cancellationToken));
+		}
+		else
+		{
+			// 和当前用户有关的记录
+			var userRecords =
+				from r in DbContext.Records
+				where r.UserName == userName
+				select r;
+
+			// 为每个成就项生成三个数值：总数计分，普通完成计分，特殊完成计分
+			// 注意总数是所所有非特殊成就的个数总和，因此非特殊成就会设置为 1
+			var userAchievementCount =
+				from a in DbContext.Items.AsNoTracking()
+				join r in userRecords
+					on new { a.CategoryName, a.CodeName } equals new { r.CategoryName, CodeName = r.AchievementName }
+					into gr
+				from r in gr.DefaultIfEmpty()
+				select new
+				{
+					a.CategoryName,
+					NormalFinished = r.IsCompleted && a.State != AchievementState.Special ? 1 : 0,
+					SpecialFinished = r.IsCompleted && a.State == AchievementState.Special ? 1 : 0,
+					VisibleCount = a.State != AchievementState.Special ? 1 : 0,
+				};
+
+			// 分类汇总求取当前用户每个分类下的普通完成数，特殊完成数和总计数
+			var categoryStat =
+				from i in userAchievementCount
+				group i by i.CategoryName
+				into g
+				select new
+				{
+					CategoryName = g.Key,
+					NormalCount = (int?)g.Sum(x => x.NormalFinished),
+					SpecialCount = (int?)g.Sum(x => x.SpecialFinished),
+					VisibleCount = (int?)g.Sum(x => x.VisibleCount)
+				};
+
+
+			var result =
+				from c in DbContext.Categories.AsNoTracking()
+				join i in categoryStat
+					on c.CodeName equals i.CategoryName into us
+				from i in us.DefaultIfEmpty()
+				select new CategoryUserSummaryInfo
+				{
+					Item = c,
+					VisibleAchievementCount = i.VisibleCount ?? 0,
+					UserFinishedCount = i.NormalCount ?? 0,
+					UserSpecialCount = i.SpecialCount ?? 0
+				};
+
+			return View("IndexUser", await result.ToArrayAsync(cancellationToken));
+		}
+	}
+
+	///// <summary>
+	///// 展示成就系统主页。
+	///// </summary>
+	///// <param name="category">如果该参数不为 <c>null</c> 则用户表示选中了特定分类。</param>
+	///// <param name="page">要显示的页码。</param>
+	///// <param name="cancellationToken">用于取消操作的令牌。</param>
+	///// <returns>操作结果。</returns>
+	//public async Task<IActionResult> Index(string? category = null, int mode = 0, int page = 1,
+	//	CancellationToken cancellationToken = default)
+	//{
+	//	var userName = User.Identity?.Name;
+
+	//	var items =
+	//		from i in DbContext.Items
+	//		select i;
+
+	//	// 用户左边筛选了分类
+	//	if (category != null)
+	//	{
+	//		items = from i in items
+	//				where i.CategoryName == category
+	//				select i;
+	//	}
+
+	//	// 筛选出当前用户的所有记录
+	//	var userRecords =
+	//		from r in DbContext.Records
+	//		where r.UserName == userName
+	//		select r;
+
+	//	// 跳过所有用户未完成的特殊成
+	//	// 隐藏成就在此处仍然包括，显示部分进行隐藏处理
+	//	var result =
+	//		from i in items.Include(p => p.Category)
+	//		join r in userRecords
+	//			on new { i.CategoryName, i.CodeName } equals new { r.CategoryName, CodeName = r.AchievementName } into
+	//			rs
+	//		from r in rs.DefaultIfEmpty()
+	//		where r.IsCompleted || i.State != AchievementState.Special
+	//		orderby i.CategoryName, i.SortOrder
+	//		select new AchievementAndUserRecordInfo
+	//		{
+	//			Item = i,
+	//			Record = r
+	//		};
+
+	//	var view = mode == 0 ? "Index" : "Index2";
+
+	//	ViewBag.Category = category!;
+	//	return View(view, await result.ToPagedListAsync(12, page, cancellationToken));
+	//}
+
+	/// <summary>
+	/// 列出特定分类的成就一览。
+	/// </summary>
+	/// <param name="category">分类名称。</param>
+	/// <param name="page">页码。</param>
+	/// <param name="cancellationToken">用于取消操作的令牌。</param>
+	/// <returns>操作结果。</returns>
+	[Route("{controller}/{action}/{category}")]
+	public async Task<IActionResult> List(string category, int page = 1, CancellationToken cancellationToken = default)
+	{
+		// 检索分类信息
+		var categoryData =
+			await (from i in DbContext.Categories.AsNoTracking()
+				   where i.CodeName == category
+				   select i).SingleOrDefaultAsync(cancellationToken);
+
+		// 分类名不存在
+		if (categoryData == null)
+		{
+			return NotFound();
+		}
+
+		// 附加到视图数据
+		ViewBag.Category = categoryData;
+
+		var userName = User.Identity?.Name;
+
+		// 所有合格的成就项目
 		var items =
 			from i in DbContext.Items
+			where i.CategoryName == category
 			select i;
-
-		// 用户左边筛选了分类
-		if (category != null)
-		{
-			items = from i in items
-					where i.CategoryName == category
-					select i;
-		}
 
 		// 筛选出当前用户的所有记录
 		var userRecords =
@@ -97,7 +246,6 @@ public class AchievementController : Controller
 				Record = r
 			};
 
-		ViewBag.Category = category!;
 		return View(await result.ToPagedListAsync(12, page, cancellationToken));
 	}
 

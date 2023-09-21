@@ -16,50 +16,41 @@ if (!String.format) {
 	};
 }
 
+//window.onload = function () {
+//	document.querySelectorAll('[data-toggle="remote-dialog"]').forEach(function (ele) {
+//		ele.addEventListener('click',
+//			function () {
+//				loadDialogFromButton(this);
+//			});
+//	});
 
-var popoverElementList = document.querySelectorAll('[data-bs-toggle="popover"]');
-var popoverList = popoverElementList.forEach(function (ele, key, parent) {
-	var popover = new bootstrap.Popover(ele, {
-		title: '成就详情',
-		content: document.getElementById(ele.getAttribute('data-bs-content-id'))
-	});
-});
+//	document.querySelectorAll('[data-toggle="progress"]').forEach(function (ele) {
 
-window.onload = function () {
-	document.querySelectorAll('[data-toggle="remote-dialog"]').forEach(function (ele) {
-		ele.addEventListener('click',
-			function () {
-				loadDialogFromButton(this);
-			});
-	});
+//		var max = parseInt(ele.dataset.maxValue);
+//		var now = parseInt(ele.dataset.nowValue);
 
-	document.querySelectorAll('[data-toggle="progress"]').forEach(function (ele) {
+//		var rate = now / max;
+//		if (isNaN(rate) || rate < 0) {
+//			rate = 0;
+//		}
 
-		var max = parseInt(ele.dataset.maxValue);
-		var now = parseInt(ele.dataset.nowValue);
+//		if (rate > 1) {
+//			rate = 1;
+//		}
 
-		var rate = now / max;
-		if (isNaN(rate) || rate < 0) {
-			rate = 0;
-		}
+//		var style = 'bg-primary';
+//		if (rate < 1 / 3) {
+//			style = 'bg-danger';
+//		}
+//		else if (rate < 2 / 3) {
+//			style = 'bg-warning';
+//		}
 
-		if (rate > 1) {
-			rate = 1;
-		}
+//		ele.classList.add(style);
 
-		var style = 'bg-primary';
-		if (rate < 1 / 3) {
-			style = 'bg-danger';
-		}
-		else if (rate < 2 / 3) {
-			style = 'bg-warning';
-		}
-
-		ele.classList.add(style);
-
-		ele.style.width = String.format('{0}%', rate * 100);
-	});
-}
+//		ele.style.width = String.format('{0}%', rate * 100);
+//	});
+//}
 
 
 function ajaxLoad(url, targetSelector) {
@@ -86,3 +77,63 @@ function loadDialogFromButton(ele) {
 	var dialog = ele.dataset.target;
 	return ajaxLoadDialog(remoteUrl, dialog);
 }
+
+
+$(function () {
+
+	// 初始化全部进度条数值
+	$('.ui.progress').progress();
+
+	// 初始化下拉列表
+	$('.ui.dropdown').dropdown();
+
+	// 初始化单选框和复选框
+	$('.ui.checkbox').checkbox();
+
+	$('.ui.form').form();
+
+	// 初始化所有消息框的关闭按钮效果
+	$('.message .close').on('click',
+		function () {
+			$(this).closest('.message').transaction('fade');
+		});
+
+
+	// data 对话框支持
+	$('[data-toggle="modal"]').each(function (_, ele) {
+
+		$(ele).click(function () {
+			var target = $(ele).data('target');
+			$(target).modal('show');
+		});
+	});
+
+	// data 对话框关闭支持
+	$('[data-dismiss="modal"]').each(function (_, ele) {
+
+		$(ele).click(function () {
+			var target = $(ele).closest('.modal');
+			$(target).modal('hide');
+		});
+	});
+
+	// data 远程对话框支持
+	$('[data-toggle="remote-dialog"]').each(function (_, ele) {
+
+		var target = $(ele).data('target');
+
+		$(ele).click(function () {
+
+			var url = $(ele).data('remote-url');
+
+			$.ajax(url, {
+				success: function (data) {
+					$(target).html(data);
+					$('.modal', target).modal('show');
+				}
+			});
+
+		});
+
+	});
+});
