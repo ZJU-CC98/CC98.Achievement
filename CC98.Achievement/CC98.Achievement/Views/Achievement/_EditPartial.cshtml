@@ -14,14 +14,14 @@
 	<div class="field" asp-for="CategoryName">
 		<label asp-for="CategoryName">成就分类</label>
 		<vc:app-selector asp-for="CategoryName" read-only="@isEdit"></vc:app-selector>
-		<span asp-validation-for="CategoryName" class="text-danger"></span>
+		<a asp-validation-for="CategoryName" class="ui basic red pointing prompt label"></a>
 		<div class="ui message">该成就所属的分类。这将影响成就的显示分组。此外，由于分类和应用关联，该设置也将影响可颁发成就的应用来源。</div>
 	</div>
 
 	<div class="field" asp-for="CodeName">
 		<label asp-for="CodeName">成就标识</label>
 		<input type="text" asp-for="CodeName" readonly="@isEdit" disabled="@isEdit" />
-		<span asp-validation-for="CodeName" class="text-danger"></span>
+		<a asp-validation-for="CodeName" class="ui basic red pointing prompt label"></a>
 		<div class="ui message">该成就项的标识。第三方应用推送成就信息时，将使用该字段标识本成就。用户通常不会看到标识内容。处于兼容和规范性考虑，建议使用英文字母、数字和横线来定义标识。</div>
 	</div>
 
@@ -36,28 +36,28 @@
 	<div class="field" asp-for="DisplayName">
 		<label asp-for="DisplayName">成就名称</label>
 		<input type="text" asp-for="DisplayName" />
-		<span asp-validation-for="DisplayName" class="text-danger"></span>
+		<a asp-validation-for="DisplayName" class="ui basic red pointing prompt label"></a>
 		<div class="ui message">该成就的名称。用户可以在成就系统界面中看到该名称。</div>
 	</div>
 
 	<div class="field" asp-for="Description">
 		<label asp-for="Description">成就描述</label>
 		<textarea asp-for="Description" rows="3"></textarea>
-		<span asp-validation-for="Description" class="text-danger"></span>
+		<a asp-validation-for="Description" class="ui basic red pointing prompt label"></a>
 		<div class="ui message">该成就的描述。用户可以在成就系统界面中看到该描述。尽管描述不是必需的，还是建议你为每个成就都添加描述信息。</div>
 	</div>
 
 	<div class="field" asp-for="IconUri">
 		<label asp-for="IconUri">成就图标</label>
 		<input asp-for="IconUri" type="url" placeholder="使用默认图标" />
-		<span asp-validation-for="IconUri" class="text-danger"></span>
+		<a asp-validation-for="IconUri" class="ui basic red pointing prompt label"></a>
 		<div class="ui message">该成就的图标。用户可以在成就系统界面中看到该图标。如果不使用图标，则该成就将使用系统提供的默认图标。从用户体验角度而言，建议你为每个成就都提供辨识度高的图标。</div>
 	</div>
 
 	<div class="field" asp-for="SortOrder">
 		<label asp-for="SortOrder">排序值</label>
 		<input asp-for="SortOrder" type="number" step="1" />
-		<span asp-validation-for="SortOrder" class="text-danger"></span>
+		<a asp-validation-for="SortOrder" class="ui basic red pointing prompt label"></a>
 		<div class="ui message">该成就的排序值，在同一个应用提供的成就列表中，排序值越小的成就显示顺序越靠前。如果有成就的排序值相同，则它们间的顺序可能是随机的。</div>
 	</div>
 
@@ -66,14 +66,14 @@
 	<div class="field" asp-for="Hint">
 		<label asp-for="Hint">成就提示</label>
 		<textarea asp-for="Hint" rows="3"></textarea>
-		<span asp-validation-for="Hint" class="text-danger"></span>
+		<a asp-validation-for="Hint" class="ui basic red pointing prompt label"></a>
 		<div class="ui message">用于提示用户如何获取这项成就的相关额外信息。这个信息是可选的。如果提供了提示，它将会显示在成就的详细信息界面。</div>
 	</div>
 
 	<div class="field" asp-for="Reward">
 		<label asp-for="Reward">成就奖励</label>
 		<textarea asp-for="Reward" rows="3"></textarea>
-		<span asp-validation-for="Reward" class="text-danger"></span>
+		<a asp-validation-for="Reward" class="ui basic red pointing prompt label"></a>
 		<div class="ui message">当用户获取该成就后，将获得的奖励内容的说明。奖励的实际颁发和管理由相关应用自行负责，成就系统自身不使用该信息，对其内容也没有格式要求。</div>
 	</div>
 
@@ -112,7 +112,6 @@
 		</div>
 	</div>
 
-	<span class="text-danger" asp-validation-for="State"></span>
 
 	<div class="ui divider"></div>
 
@@ -121,6 +120,9 @@
 			<input class="hidden" type="checkbox" asp-for="IsDynamic" />
 			<label>这是一个动态成就</label>
 		</div>
+		
+		<a asp-validation-for="IsDynamic" class="ui basic red pointing prompt label"></a>
+
 		<div class="ui message">选中上面的复选框将提示用户这个成就的获得条件可能会动态变化，也即意味着用户获得这项成就一段时间后，可能会因为不再满足新情况而失去成就。建议尽量避免设定动态成就，因为这可能会降低用户获得成就时的满足感。注意：这个选项只用于提醒用户成就性质，并不影响颁发成就的应用权限，应用始终可以通过 API 接口撤销用户已经获得的成就。</div>
 	</div>
 
@@ -129,7 +131,7 @@
 	<div class="field" asp-for="MaxValue">
 		<label asp-for="MaxValue">成就计数值</label>
 		<input type="number" step="1" min="0" asp-for="MaxValue" placeholder="不启用成就计数" />
-		<span asp-validation-for="MaxValue" class="text-danger"></span>
+		<a asp-validation-for="MaxValue" class="ui basic red pointing prompt label"></a>
 		<div class="ui message">如果启用成就计数，则表示该成就是一个计数类成就，用户通常需要满足条件一定次数（或数量）才能完成。如果该成就为<q>普通成就</q>，用户还可在成就界面上看到当前自己的进度值。</div>
 	</div>
 

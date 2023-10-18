@@ -1,7 +1,7 @@
 ﻿using System.Security.Principal;
 
 using Microsoft.AspNetCore.Html;
-
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Sakura.AspNetCore;
 
 namespace CC98.Achievement;
@@ -73,5 +73,16 @@ public static class Utility
 			action(item, index);
 			index++;
 		}
+	}
+
+	/// <summary>
+	/// 获取模型错误的第一个错误消息。
+	/// </summary>
+	/// <param name="errorCollection">模型错误的集合。</param>
+	/// <returns>错误消息。</returns>
+	public static string? GetFirstErrorMessage(this ModelErrorCollection errorCollection)
+	{
+		var firstError = errorCollection.FirstOrDefault();
+		return firstError?.ErrorMessage;
 	}
 }
