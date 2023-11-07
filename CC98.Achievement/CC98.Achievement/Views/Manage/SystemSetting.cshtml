@@ -6,88 +6,92 @@
 	var hiddenPartEnumList = Enum.GetValues<AchievementItemParts>().Where(i => i != 0);
 }
 
-<form asp-controller="Manage" asp-action="SystemSetting" method="post" asp-antiforgery="true">
+<form asp-controller="Manage" asp-action="SystemSetting" method="post" asp-antiforgery="true" class="ui form">
 
-	<div class="row justify-content-center">
-		<div class="col-12 col-sm-9 col-md-6">
+	<div class="ui grid">
+		<div class="doubling two column centered row">
+			<div class="column">
 
-			<div class="card mb-3">
-				<div class="card-header">显示设置</div>
-				<div class="card-body">
 
-					<div class="mb-3">
-						<label asp-for="DefaultIconUri" class="form-label">成就默认图标</label>
-						<input type="url" asp-for="DefaultIconUri" class="form-control" />
-						<span class="text-danger" asp-validation-for="DefaultIconUri"></span>
-						<div class="form-text">如果成就没有设定图标，则此处的图标将作为默认图标展示在成就获取和展示页面。</div>
+				<div class="ui segment">
+
+					<div class="ui large dividing header">显示设置</div>
+
+					<div class="field" asp-for="DefaultIconUri">
+						<label asp-for="DefaultIconUri">成就分类</label>
+						<input type="url" asp-for="DefaultIconUri" />
+						<a asp-validation-for="DefaultIconUri" class="ui basic red pointing prompt label"></a>
+						<div class="ui message">如果成就没有设定图标，则此处的图标将作为默认图标展示在成就获取和展示页面。</div>
 					</div>
 
-					<hr />
+					<div class="ui divider"></div>
+					
+					<div class="field" asp-for="HiddenDisplayParts">
+						<label>隐藏成就显示部分</label>
+					</div>
 
-					<div class="mb-3">
-						<label asp-for="HiddenDisplayParts">隐藏成就设置</label>
+					<div class="inline fields" asp-for="HiddenDisplayParts">
 
 						@foreach (var item in hiddenPartEnumList)
 						{
-							<div class="form-check form-check-inline">
-								<label>
-									<input type="checkbox" asp-enum-flag-for="HiddenDisplayParts" asp-enum-flag-value="@item" /> <enum-item-display-text value="@item" text-source="Name" />
-								</label>
+							<div class="field">
+								<div class="ui checkbox">
+									<input type="checkbox" asp-enum-flag-for="HiddenDisplayParts" asp-enum-flag-value="@item" />
+									<label><enum-item-display-text value="@item" text-source="Name" /></label>
+								</div>
 							</div>
-
 						}
-
-
 					</div>
 
-
 				</div>
-			</div>
 
-			<div class="card mb-3">
-				<div class="card-header">隐藏成就模板</div>
-				<div class="card-body">
-					<div class="alert alert-info">对于隐藏成就，用户必须获得后才能查看其完整的信息。在获得之前，被隐藏的相关信息项将由此处的模板内容进行替代。</div>
+				<div class="ui segment">
 
-					<div class="mb-3">
+					<div class="ui large dividing header">隐藏成就模板</div>
+
+					<div class="ui info message">对于隐藏成就，用户必须获得后才能查看其完整的信息。在获得之前，被隐藏的相关信息项将由此处的模板内容进行替代。</div>
+
+					<div class="field" asp-for="HiddenItemTemplate.DisplayName">
 						<label asp-for="HiddenItemTemplate.DisplayName">成就名称</label>
-						<input asp-for="HiddenItemTemplate.DisplayName" class="form-control" />
-						<span class="text-danger" asp-validation-for="HiddenItemTemplate.DisplayName"></span>
+						<input asp-for="HiddenItemTemplate.DisplayName" />
+						<a asp-validation-for="HiddenItemTemplate.DisplayName" class="ui basic red pointing prompt label"></a>
 					</div>
 
-					<div class="mb-3">
+					<div class="field" asp-for="HiddenItemTemplate.IconUri">
 						<label asp-for="HiddenItemTemplate.IconUri">成就图标</label>
-						<input type="url" asp-for="HiddenItemTemplate.IconUri" class="form-control" />
-						<span class="text-danger" asp-validation-for="HiddenItemTemplate.IconUri"></span>
+						<input type="url" asp-for="HiddenItemTemplate.IconUri" placeholder="使用默认成就图标" />
+						<a asp-validation-for="HiddenItemTemplate.IconUri" class="ui basic red pointing prompt label"></a>
 					</div>
 
-					<div class="mb-3">
+					<div class="field" asp-for="HiddenItemTemplate.Description">
 						<label asp-for="HiddenItemTemplate.Description">成就描述</label>
-						<textarea asp-for="HiddenItemTemplate.Description" class="form-control" rows="3"></textarea>
-						<span class="text-danger" asp-validation-for="HiddenItemTemplate.Description"></span>
+						<textarea asp-for="HiddenItemTemplate.Description" rows="3"></textarea>
+						<a asp-validation-for="HiddenItemTemplate.Description" class="ui basic red pointing prompt label"></a>
 					</div>
 
-					<div class="mb-3">
+					<div class="field" asp-for="HiddenItemTemplate.Hint">
 						<label asp-for="HiddenItemTemplate.Hint">成就提示</label>
-						<textarea asp-for="HiddenItemTemplate.Hint" class="form-control" rows="3"></textarea>
-						<span class="text-danger" asp-validation-for="HiddenItemTemplate.Hint"></span>
+						<textarea asp-for="HiddenItemTemplate.Hint" rows="3"></textarea>
+						<a asp-validation-for="HiddenItemTemplate.Hint" class="ui basic red pointing prompt label"></a>
 					</div>
 
 
 
-					<div class="mb-3">
+					<div class="field" asp-for="HiddenItemTemplate.Reward">
 						<label asp-for="HiddenItemTemplate.Reward">成就奖励</label>
-						<textarea asp-for="HiddenItemTemplate.Reward" class="form-control" rows="3"></textarea>
-						<span class="text-danger" asp-validation-for="HiddenItemTemplate.Reward"></span>
+						<textarea asp-for="HiddenItemTemplate.Reward" rows="3"></textarea>
+						<a asp-validation-for="HiddenItemTemplate.Reward" class="ui basic red pointing prompt label"></a>
 					</div>
 
 				</div>
+
+
+				<div class="ui divider"></div>
+
+				<div asp-validation-summary="ModelOnly"></div>
+				<button type="submit" class="ui primary button">更改设置</button>
+				<button type="reset" class="ui button">清空填写</button>
 			</div>
-
-			<div class="text-danger" asp-validation-summary="ModelOnly"></div>
-			<button type="submit" class="btn btn-primary">修改设置</button>
-			<button type="reset" class="btn btn-outline-secondary">撤销更改</button>
-
 		</div>
 	</div>
 

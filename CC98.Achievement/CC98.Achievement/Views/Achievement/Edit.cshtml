@@ -9,6 +9,8 @@
 	var userRecords = (IPagedList<AchievementRecord>)ViewBag.UserRecords;
 }
 
+<div class="ui warning message">虽然你可以在这里编辑成就信息，但如果这个成就由业务应用程序通过后台 API 接口维护，你进行的修改很有可能息因为业务应用程序的后台定期同步而遭到覆盖。推荐的做法由业务应用程序的开发人员修改在业务中定义的成就信息并及时通过后台接口更新。</div>
+
 <div class="ui grid">
 
 	<div class="doubling two column row">
@@ -45,6 +47,7 @@
 				<div class="ui large dividing header">用户获得情况</div>
 
 				<div class="ui info message">本区域的操作和成就基本信息的操作无法同时生效。如果你修改了成就信息，请先提交修改再进行用户获得情况的相关操作。</div>
+				<div class="ui warning message">业务应用程序可能会随时对用户的成就情况进行计算并通过后台接口同步刷新用户获得状态。你在这里的修改很可能在之后被覆盖。如果你认为成就颁发出现错误，建议联系业务应用程序的开发人员更新后台逻辑，并强制刷新用户列表。</div>
 
 
 				@if (userRecords.Any())

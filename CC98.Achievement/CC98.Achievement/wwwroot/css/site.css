@@ -39,3 +39,7 @@ body {
 .special.card > .content > .ui.floated.image {
 	margin-bottom: 0;
 }
+
+.ui.form .inline.fields.required > .field > .checkbox:after {
+	content: none; 
+}

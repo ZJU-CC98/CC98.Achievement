@@ -3,14 +3,17 @@
 	ViewBag.Title = "创建成就";
 }
 
+<div class="ui warning message">虽然你可以在这里创建成就，但如果关联的业务应用程序没有实现计算成就的相关逻辑，用户将无法通过业务操作自动获得成就，只能由管理员在后台为每个用户手动颁发，成就管理将会十分繁琐。因此，不建议手动创建成就，推荐用法是由每个业务应用程序通过 API 接口向成就系统发送自己支持的成就清单并定期更新成就获取信息。</div>
+<div class="ui info message">成就创建之后，你可以进入这个成就的编辑页面设定每个用户的成绩获得情况。</div>
+
 <form class="ui form" asp-controller="Achievement" asp-action="Create" method="post" asp-antiforgery="true">
-	
+
 	<div class="ui grid">
 		<div class="doubling two column centered row">
 			<div class="column">
 
-				<partial name="_EditPartial"/>
-				
+				<partial name="_EditPartial" />
+
 				<div class="ui divider"></div>
 
 				<div class="text-danger" asp-validation-summary="ModelOnly"></div>
