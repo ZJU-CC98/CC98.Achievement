@@ -239,7 +239,11 @@ public class AchievementController : Controller
 				rs
 			from r in rs.DefaultIfEmpty()
 			where r.IsCompleted || i.State != AchievementState.Special
-			orderby i.CategoryName, i.SortOrder
+			let sortHint =
+				i.State == AchievementState.Normal
+					? 100
+					: Convert.ToInt32(r.IsCompleted)
+			orderby sortHint descending, i.SortOrder // 先显示完成的
 			select new AchievementAndUserRecordInfo
 			{
 				Item = i,
