@@ -31,7 +31,7 @@ public class AchievementController : ControllerBase
 	/// <summary>
 	/// 数据库上下文对象。
 	/// </summary>
-	private AchievementDbContext DbContext { get; set; }
+	private AchievementDbContext DbContext { get; }
 
 	/// <summary>
 	/// 用于获取当前登录的客户端的标识的辅助方法。
@@ -217,11 +217,10 @@ public class AchievementController : ControllerBase
 					select i;
 		}
 
-		DbContext.RemoveRange(items);
 
 		try
 		{
-			await DbContext.SaveChangesAsync(cancellationToken);
+			await items.ExecuteDeleteAsync(cancellationToken);
 			return Ok();
 		}
 		catch (DbUpdateException ex)
@@ -276,6 +275,9 @@ public class AchievementController : ControllerBase
 			? new CategoryInfo
 			{
 				DisplayName = category.DisplayName,
+				DefaultIconUri = category.DefaultIconUri,
+				DefaultHideIconUri = category.DefaultHideIconUri,
+				AppIconUri = category.AppIconUri,
 				UserCount = category.UserCount
 			}
 			: null;
@@ -304,6 +306,9 @@ public class AchievementController : ControllerBase
 
 		category.DisplayName = info.DisplayName;
 		category.UserCount = info.UserCount;
+		category.DefaultIconUri = info.DefaultIconUri;
+		category.DefaultHideIconUri = info.DefaultHideIconUri;
+		category.AppIconUri = info.AppIconUri;
 
 		try
 		{

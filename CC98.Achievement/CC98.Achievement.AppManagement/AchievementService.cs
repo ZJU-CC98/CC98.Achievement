@@ -158,10 +158,10 @@ public class AchievementService
 	/// <param name="userName">用户名。</param>
 	/// <param name="cancellationToken">用于取消操作的令牌。</param>
 	/// <returns>表示异步操作的任务。操作结果包含给定用户当前所有成就及其进度信息。</returns>
-	public async Task<IEnumerable<RecordInfo>> GetUserAchievementsAsync(string userName, CancellationToken cancellationToken = default)
+	public async Task<IReadOnlyCollection<RecordInfo>> GetUserAchievementsAsync(string userName, CancellationToken cancellationToken = default)
 	{
 		await EnsureLogOnAsync(cancellationToken);
-		return await RestClient!.TryExecuteJsonAsync<IEnumerable<RecordInfo>>(Method.Get,
+		return await RestClient!.TryExecuteJsonAsync<IReadOnlyCollection<RecordInfo>>(Method.Get,
 			$"achievement?userName={Uri.EscapeDataString(userName)}", cancellationToken);
 	}
 
