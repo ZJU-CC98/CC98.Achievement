@@ -1,4 +1,5 @@
-﻿using CC98.Achievement.Services;
+﻿using System.Collections.ObjectModel;
+using CC98.Achievement.Services;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,56 +15,38 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 namespace CC98.Achievement.Controllers;
 
 /// <summary>
-/// 提供系统管理功能。
+/// 提供系统管理功能
 /// </summary>
+/// <param name="messageAccessor">消息访问服务。</param>
+/// <param name="sharedResourceLocalizer">共享的本地化资源。</param>
+/// <param name="localizer">本地化资源。</param>
+/// <param name="appSettingService">应用程序设置。</param>
+/// <param name="backService">后端服务。</param>
 [Authorize(Policies.Admin)]
-public class ManageController : Controller
+public class ManageController(IOperationMessageAccessor messageAccessor, IDynamicHtmlLocalizer<SharedResources> sharedResourceLocalizer, IDynamicHtmlLocalizer<ManageController> localizer, AppSettingService<SystemSetting> appSettingService, AchievementBackService backService)
+	: Controller
 {
-	/// <inheritdoc />
-	public ManageController(IConfiguration configuration, IOperationMessageAccessor messageAccessor, IDynamicHtmlLocalizer<SharedResources> sharedResourceLocalizer, IDynamicHtmlLocalizer<ManageController> localizer, AppSettingService<SystemSetting> appSettingService, AchievementBackService backService)
+
+	/// <summary>
+	/// JSON 序列化的默认配置。
+	/// </summary>
+	private static JsonSerializerOptions JsonSerializerOptions { get; } = GenerateJsonSerializerOptions();
+
+	/// <summary>
+	/// 生成 JSON 序列化的默认配置。
+	/// </summary>
+	/// <returns></returns>
+	private static JsonSerializerOptions GenerateJsonSerializerOptions()
 	{
-		Configuration = configuration;
-		MessageAccessor = messageAccessor;
-		SharedResourceLocalizer = sharedResourceLocalizer;
-		Localizer = localizer;
-		AppSettingService = appSettingService;
-		BackService = backService;
+		var options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+		options.Converters.Add(new JsonStringEnumConverter());
+		return options;
 	}
-
-	/// <summary>
-	/// 系统设置服务。
-	/// </summary>
-	private AppSettingService<SystemSetting> AppSettingService { get; }
-
-	/// <summary>
-	/// 应用程序配置。
-	/// </summary>
-	private IConfiguration Configuration { get; }
-
-	/// <summary>
-	/// 消息服务。
-	/// </summary>
-	private IOperationMessageAccessor MessageAccessor { get; }
-
-	/// <summary>
-	/// 公用字符串资源。
-	/// </summary>
-	private IDynamicHtmlLocalizer<SharedResources> SharedResourceLocalizer { get; }
-
-	/// <summary>
-	/// 字符串资源。
-	/// </summary>
-	private IDynamicHtmlLocalizer<ManageController> Localizer { get; }
-
-	/// <summary>
-	/// 后台 API 服务。
-	/// </summary>
-	private AchievementBackService BackService { get; }
 
 	/// <summary>
 	/// 获取系统预定义的成就项目。
 	/// </summary>
-	private static AchievementItemRegisterInfo[] AchievementList { get; } = LoadPredefinedItems();
+	private static ReadOnlyCollection<AchievementItemRegisterInfo> AchievementList { get; } = LoadPredefinedItems();
 
 	/// <summary>
 	/// 显示管理界面主页。
@@ -75,17 +58,14 @@ public class ManageController : Controller
 		return View();
 	}
 
+
 	/// <summary>
 	/// 从系统文件中加载预制的成就数据。
 	/// </summary>
 	/// <returns></returns>
-	private static AchievementItemRegisterInfo[] LoadPredefinedItems()
+	private static ReadOnlyCollection<AchievementItemRegisterInfo> LoadPredefinedItems()
 	{
-		var options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
-		options.Converters.Add(new JsonStringEnumConverter());
-
-		return JsonSerializer.Deserialize<AchievementItemRegisterInfo[]>(Properties.Resources.AchievementList, options)!;
-
+		return JsonSerializer.Deserialize<AchievementItemRegisterInfo[]>(Properties.Resources.AchievementList, JsonSerializerOptions)!.AsReadOnly();
 	}
 
 	/// <summary>
@@ -99,7 +79,7 @@ public class ManageController : Controller
 	{
 		try
 		{
-			var result = await BackService.InnerService.RegisterAchievementsAsync(new()
+			var result = await backService.InnerService.RegisterAchievementsAsync(new()
 			{
 				Items = AchievementList,
 				Options = new()
@@ -108,14 +88,14 @@ public class ManageController : Controller
 				}
 			}, cancellationToken);
 
-			Utility.AddMessage(MessageAccessor, OperationMessageLevel.Success,
-				SharedResourceLocalizer.Html.OperationSucceeded, Localizer.Html.RegisterSucceeded(
+			Utility.AddMessage(messageAccessor, OperationMessageLevel.Success,
+				sharedResourceLocalizer.Html.OperationSucceeded, localizer.Html.RegisterSucceeded(
 					result.NewItemCount, result.UpdatedItemCount,
 					result.DeletedItemCount));
 		}
 		catch (Exception ex)
 		{
-			MessageAccessor.Add(OperationMessageLevel.Error, "操作失败", ex.GetBaseMessage());
+			messageAccessor.Add(OperationMessageLevel.Error, "操作失败", ex.GetBaseMessage());
 		}
 
 		return RedirectToAction("Index", "Manage");
@@ -128,7 +108,7 @@ public class ManageController : Controller
 	[HttpGet]
 	public IActionResult SystemSetting()
 	{
-		return View(AppSettingService.Current);
+		return View(appSettingService.Current);
 	}
 
 	/// <summary>
@@ -151,8 +131,8 @@ public class ManageController : Controller
 
 		if (ModelState.IsValid)
 		{
-			AppSettingService.Current = model;
-			Utility.AddMessage(MessageAccessor, OperationMessageLevel.Success, SharedResourceLocalizer.Html.OperationSucceeded, Localizer.Html.SystemSettingUpdated);
+			appSettingService.Current = model;
+			Utility.AddMessage(messageAccessor, OperationMessageLevel.Success, sharedResourceLocalizer.Html.OperationSucceeded, localizer.Html.SystemSettingUpdated);
 
 			RedirectToAction("SystemSetting", "Manage");
 		}

@@ -12,30 +12,12 @@ namespace CC98.Achievement.Controllers;
 /// <summary>
 /// 提供对成就系统业务应用的管理。
 /// </summary>
-public class CategoryController : Controller
+/// <param name="dbContext">数据库上下文对象。</param>
+/// <param name="messageAccessor">消息管理器。</param>
+/// <param name="sharedResourcesLocalizer">共享的本地化资源。</param>
+/// <param name="localizer">本地化资源。</param>
+public class CategoryController(AchievementDbContext dbContext, IOperationMessageAccessor messageAccessor, IDynamicHtmlLocalizer<SharedResources> sharedResourcesLocalizer, IDynamicHtmlLocalizer<CategoryController> localizer) : Controller
 {
-	/// <inheritdoc />
-	public CategoryController(AchievementDbContext dbContext, IOperationMessageAccessor messageAccessor, IDynamicHtmlLocalizer<SharedResources> sharedResourcesLocalizer, IDynamicHtmlLocalizer<CategoryController> localizer)
-	{
-		DbContext = dbContext;
-		MessageAccessor = messageAccessor;
-		SharedResourcesLocalizer = sharedResourcesLocalizer;
-		Localizer = localizer;
-	}
-
-	/// <summary>
-	/// 数据库上下文对象。
-	/// </summary>
-	private AchievementDbContext DbContext { get; }
-
-	/// <summary>
-	/// 消息对象。
-	/// </summary>
-	private IOperationMessageAccessor MessageAccessor { get; }
-
-	private IDynamicHtmlLocalizer<SharedResources> SharedResourcesLocalizer { get; }
-
-	private IDynamicHtmlLocalizer<CategoryController> Localizer { get; }
 
 	/// <summary>
 	/// 显示管理界面。
@@ -48,7 +30,7 @@ public class CategoryController : Controller
 	public async Task<IActionResult> Manage(int page = 1, CancellationToken cancellationToken = default)
 	{
 		var items =
-			from i in DbContext.Categories
+			from i in dbContext.Categories
 			orderby i.DisplayName
 			select i;
 
@@ -79,14 +61,14 @@ public class CategoryController : Controller
 	{
 		if (ModelState.IsValid)
 		{
-			DbContext.Categories.Add(model);
+			dbContext.Categories.Add(model);
 
 			try
 			{
-				await DbContext.SaveChangesAsync(cancellationToken);
-				Utility.AddMessage(MessageAccessor, OperationMessageLevel.Success,
-					SharedResourcesLocalizer.Html.OperationSucceeded,
-					Localizer.Html.CategoryCreated(model.DisplayName, GetCategoryUri(model.CodeName)));
+				await dbContext.SaveChangesAsync(cancellationToken);
+				Utility.AddMessage(messageAccessor, OperationMessageLevel.Success,
+					sharedResourcesLocalizer.Html.OperationSucceeded,
+					localizer.Html.CategoryCreated(model.DisplayName, GetCategoryUri(model.CodeName)));
 
 				return RedirectToAction("Manage", "Category");
 			}
@@ -110,7 +92,7 @@ public class CategoryController : Controller
 	[Authorize(Policies.Admin)]
 	public async Task<IActionResult> Edit(string codeName, CancellationToken cancellationToken)
 	{
-		var item = await DbContext.Categories.FindAsync(new object[] { codeName }, cancellationToken);
+		var item = await dbContext.Categories.FindAsync([codeName], cancellationToken);
 
 		if (item == null)
 		{
@@ -133,15 +115,15 @@ public class CategoryController : Controller
 	{
 		if (ModelState.IsValid)
 		{
-			DbContext.Update(model);
+			dbContext.Update(model);
 
 			try
 			{
-				await DbContext.SaveChangesAsync(cancellationToken);
+				await dbContext.SaveChangesAsync(cancellationToken);
 
-				Utility.AddMessage(MessageAccessor, OperationMessageLevel.Success,
-					SharedResourcesLocalizer.Html.OperationSucceeded,
-					Localizer.Html.AppUpdated(model.DisplayName, GetCategoryUri(model.CodeName)));
+				Utility.AddMessage(messageAccessor, OperationMessageLevel.Success,
+					sharedResourcesLocalizer.Html.OperationSucceeded,
+					localizer.Html.AppUpdated(model.DisplayName, GetCategoryUri(model.CodeName)));
 
 				return RedirectToAction("Manage", "Category");
 			}
@@ -166,7 +148,7 @@ public class CategoryController : Controller
 
 	public async Task<IActionResult> Delete(int codeName, CancellationToken cancellationToken)
 	{
-		var item = await DbContext.Categories.FindAsync(new object[] { codeName }, cancellationToken);
+		var item = await dbContext.Categories.FindAsync([codeName], cancellationToken);
 
 		if (item == null)
 		{
@@ -175,15 +157,15 @@ public class CategoryController : Controller
 
 		try
 		{
-			DbContext.Categories.Remove(item);
-			await DbContext.SaveChangesAsync(cancellationToken);
-			Utility.AddMessage(MessageAccessor, OperationMessageLevel.Success,
-				SharedResourcesLocalizer.Html.OperationSucceeded, Localizer.Html.AppDeleted(item.DisplayName));
+			dbContext.Categories.Remove(item);
+			await dbContext.SaveChangesAsync(cancellationToken);
+			Utility.AddMessage(messageAccessor, OperationMessageLevel.Success,
+				sharedResourcesLocalizer.Html.OperationSucceeded, localizer.Html.AppDeleted(item.DisplayName));
 		}
 		catch (DbUpdateException ex)
 		{
-			Utility.AddMessage(MessageAccessor, OperationMessageLevel.Success,
-				SharedResourcesLocalizer.Html.OperationFailed, Localizer.Html.AppDeleteFailed(item.DisplayName, Url.Action("Detail", "Category", new { item.CodeName }), ex.GetBaseMessage()));
+			Utility.AddMessage(messageAccessor, OperationMessageLevel.Success,
+				sharedResourcesLocalizer.Html.OperationFailed, localizer.Html.AppDeleteFailed(item.DisplayName, Url.Action("Detail", "Category", new { item.CodeName }), ex.GetBaseMessage()));
 		}
 
 		return RedirectToAction("Manage", "Category");
@@ -199,8 +181,8 @@ public class CategoryController : Controller
 	[Authorize(Policies.Admin)]
 	public async Task<IActionResult> Detail(string codeName, CancellationToken cancellationToken)
 	{
-		var item = 
-			await DbContext.Categories.FindAsync(new object?[] { codeName }, cancellationToken);
+		var item =
+			await dbContext.Categories.FindAsync([codeName], cancellationToken);
 
 		if (item == null)
 		{

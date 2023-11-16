@@ -42,7 +42,7 @@ public class AchievementCategory
 	/// 该分类的应用主图标。
 	/// </summary>
 	[Url]
-	public string? AppIconUri { get; set; } = null!;
+	public string? AppIconUri { get; set; }
 
 	/// <summary>
 	/// 该分类使用的默认图标。如果设置为 <c>null</c>，则使用系统全局默认图标。

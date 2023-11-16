@@ -14,42 +14,12 @@ namespace CC98.Achievement.Controllers;
 /// <summary>
 /// 提供对成就的管理功能。
 /// </summary>
-public class AchievementController : Controller
+/// <param name="dbContext">数据库上下文对象。</param>
+/// <param name="messageAccessor">消息管理对象。</param>
+/// <param name="sharedResourcesLocalizer">共享的本地化资源。</param>
+/// <param name="localizer">本地化资源。</param>
+public class AchievementController(AchievementDbContext dbContext, IOperationMessageAccessor messageAccessor, IDynamicHtmlLocalizer<SharedResources> sharedResourcesLocalizer, IDynamicHtmlLocalizer<AchievementController> localizer) : Controller
 {
-	/// <summary>
-	/// 初始化 <see cref="AchievementController"/> 的新实例。
-	/// </summary>
-	/// <param name="dbContext"><see cref="AchievementDbContext"/> 服务对象。</param>
-	/// <param name="messageAccessor"><see cref="IOperationMessageAccessor"/> 服务对象。</param>
-	/// <param name="sharedResourcesLocalizer"><see cref="IDynamicHtmlLocalizer{SharedResource}"/> 服务对象。</param>
-	/// <param name="localizer"><see cref="IDynamicHtmlLocalizer{AchievementController}"/> 服务对象。</param>
-	public AchievementController(AchievementDbContext dbContext, IOperationMessageAccessor messageAccessor, IDynamicHtmlLocalizer<SharedResources> sharedResourcesLocalizer, IDynamicHtmlLocalizer<AchievementController> localizer)
-	{
-		DbContext = dbContext;
-		MessageAccessor = messageAccessor;
-		SharedResourcesLocalizer = sharedResourcesLocalizer;
-		Localizer = localizer;
-	}
-
-	/// <summary>
-	/// 数据库上下文对象。
-	/// </summary>
-	private AchievementDbContext DbContext { get; }
-
-	/// <summary>
-	/// 消息访问器对象。
-	/// </summary>
-	private IOperationMessageAccessor MessageAccessor { get; }
-
-	/// <summary>
-	/// 共享字符串资源。
-	/// </summary>
-	private IDynamicHtmlLocalizer<SharedResources> SharedResourcesLocalizer { get; }
-
-	/// <summary>
-	/// 控制器相关字符串资源。
-	/// </summary>
-	private IDynamicHtmlLocalizer<AchievementController> Localizer { get; }
 
 	/// <summary>
 	/// 显示成就系统主页。
@@ -66,13 +36,13 @@ public class AchievementController : Controller
 		{
 			// 去掉所有特殊成就
 			var countItems =
-				from i in DbContext.Items.AsNoTracking()
+				from i in dbContext.Items.AsNoTracking()
 				where i.State != AchievementState.Special
 				select i;
 
 			//
 			var items =
-				from c in DbContext.Categories.AsNoTracking()
+				from c in dbContext.Categories.AsNoTracking()
 				join i in countItems
 					on c.CodeName equals i.CategoryName into g
 				select new CategorySummaryInfo
@@ -88,14 +58,14 @@ public class AchievementController : Controller
 		{
 			// 和当前用户有关的记录
 			var userRecords =
-				from r in DbContext.Records
+				from r in dbContext.Records
 				where r.UserName == userName
 				select r;
 
 			// 为每个成就项生成三个数值：总数计分，普通完成计分，特殊完成计分
 			// 注意总数是所所有非特殊成就的个数总和，因此非特殊成就会设置为 1
 			var userAchievementCount =
-				from a in DbContext.Items.AsNoTracking()
+				from a in dbContext.Items.AsNoTracking()
 				join r in userRecords
 					on new { a.CategoryName, a.CodeName } equals new { r.CategoryName, CodeName = r.AchievementName }
 					into gr
@@ -123,7 +93,7 @@ public class AchievementController : Controller
 
 
 			var result =
-				from c in DbContext.Categories.AsNoTracking()
+				from c in dbContext.Categories.AsNoTracking()
 				join i in categoryStat
 					on c.CodeName equals i.CategoryName into us
 				from i in us.DefaultIfEmpty()
@@ -198,12 +168,12 @@ public class AchievementController : Controller
 	/// <param name="page">页码。</param>
 	/// <param name="cancellationToken">用于取消操作的令牌。</param>
 	/// <returns>操作结果。</returns>
-	[Route("{controller}/{action}/{category}")]
+	[Route("[controller]/[action]/{category}")]
 	public async Task<IActionResult> List(string category, int page = 1, CancellationToken cancellationToken = default)
 	{
 		// 检索分类信息
 		var categoryData =
-			await (from i in DbContext.Categories.AsNoTracking()
+			await (from i in dbContext.Categories.AsNoTracking()
 				   where i.CodeName == category
 				   select i).SingleOrDefaultAsync(cancellationToken);
 
@@ -220,13 +190,13 @@ public class AchievementController : Controller
 
 		// 所有合格的成就项目
 		var items =
-			from i in DbContext.Items
+			from i in dbContext.Items
 			where i.CategoryName == category
 			select i;
 
 		// 筛选出当前用户的所有记录
 		var userRecords =
-			from r in DbContext.Records
+			from r in dbContext.Records
 			where r.UserName == userName
 			select r;
 
@@ -279,12 +249,12 @@ public class AchievementController : Controller
 
 		if (ModelState.IsValid)
 		{
-			DbContext.Items.Add(model);
+			dbContext.Items.Add(model);
 
 			try
 			{
-				await DbContext.SaveChangesAsync(cancellationToken);
-				Utility.AddMessage(MessageAccessor, OperationMessageLevel.Success, SharedResourcesLocalizer.Html.OperationSucceeded, Localizer.Html.AchievementCreated(model.DisplayName, GetUrl(model)));
+				await dbContext.SaveChangesAsync(cancellationToken);
+				Utility.AddMessage(messageAccessor, OperationMessageLevel.Success, sharedResourcesLocalizer.Html.OperationSucceeded, localizer.Html.AchievementCreated(model.DisplayName, GetUrl(model)));
 
 				return RedirectToAction("Manage", "Achievement");
 			}
@@ -309,14 +279,14 @@ public class AchievementController : Controller
 	[Authorize(Policies.Edit)]
 	public async Task<IActionResult> Edit(string category, string name, int userPage = 1, CancellationToken cancellationToken = default)
 	{
-		var item = await DbContext.Items.FindAsync(new object[] { category, name }, cancellationToken);
+		var item = await dbContext.Items.FindAsync([category, name], cancellationToken);
 		if (item == null)
 		{
 			return NotFound();
 		}
 
 		var userRecords =
-			await (from i in DbContext.Records
+			await (from i in dbContext.Records
 				   where i.CategoryName == category && i.AchievementName == name
 				   orderby i.IsCompleted descending, i.Time descending
 				   select i).ToPagedListAsync(20, userPage, cancellationToken);
@@ -340,11 +310,11 @@ public class AchievementController : Controller
 
 		if (ModelState.IsValid)
 		{
-			DbContext.Update(model);
+			dbContext.Update(model);
 
 			try
 			{
-				await DbContext.SaveChangesAsync(cancellationToken);
+				await dbContext.SaveChangesAsync(cancellationToken);
 				return RedirectToAction("Manage", "Achievement");
 			}
 			catch (DbUpdateException ex)
@@ -368,7 +338,7 @@ public class AchievementController : Controller
 	public async Task<IActionResult> Manage(AchievementSearchModel search, int page = 1, CancellationToken cancellationToken = default)
 	{
 		var items =
-			from i in DbContext.Items
+			from i in dbContext.Items
 			select i;
 
 
@@ -422,7 +392,7 @@ public class AchievementController : Controller
 	[HttpGet]
 	public async Task<IActionResult> Detail(string category, string name, int userPage = 1, CancellationToken cancellationToken = default)
 	{
-		var item = await DbContext.Items.FindAsync(new object?[] { category, name }, cancellationToken);
+		var item = await dbContext.Items.FindAsync([category, name], cancellationToken);
 
 		if (item == null)
 		{
@@ -430,8 +400,8 @@ public class AchievementController : Controller
 		}
 
 		var userRecords =
-			await (from r in DbContext.Records
-				   join u in DbContext.Users
+			await (from r in dbContext.Records
+				   join u in dbContext.Users
 					   on EF.Functions.Collate(r.UserName, "Chinese_PRC_CI_AS") equals u.Name
 				   where r.IsCompleted && r.CategoryName == category && r.AchievementName == name
 				   orderby r.Time descending
@@ -480,11 +450,11 @@ public class AchievementController : Controller
 
 		if (ModelState.IsValid)
 		{
-			DbContext.Records.Add(model);
+			dbContext.Records.Add(model);
 
 			try
 			{
-				await DbContext.SaveChangesAsync(cancellationToken);
+				await dbContext.SaveChangesAsync(cancellationToken);
 				return RedirectToAction("Edit", "Achievement", new { category = model.CategoryName, name = model.AchievementName });
 			}
 			catch (DbUpdateException ex)
@@ -513,7 +483,7 @@ public class AchievementController : Controller
 	[Authorize(Policies.Review)]
 	public async Task<IActionResult> EditRecord(string category, string name, string userName, CancellationToken cancellationToken)
 	{
-		var item = await DbContext.Records.FindAsync(new object[] { category, name, userName }, cancellationToken);
+		var item = await dbContext.Records.FindAsync([category, name, userName], cancellationToken);
 
 		if (item == null)
 		{
@@ -538,10 +508,10 @@ public class AchievementController : Controller
 
 		if (ModelState.IsValid)
 		{
-			DbContext.Records.Update(model);
+			dbContext.Records.Update(model);
 			try
 			{
-				await DbContext.SaveChangesAsync(cancellationToken);
+				await dbContext.SaveChangesAsync(cancellationToken);
 				return RedirectToAction("Edit", "Achievement",
 					new { category = model.CategoryName, name = model.AchievementName });
 			}
@@ -570,18 +540,18 @@ public class AchievementController : Controller
 	public async Task<IActionResult> DeleteRecord(string category, string name, string userName,
 		CancellationToken cancellationToken)
 	{
-		var item = await DbContext.Records.FindAsync(new object[] { category, name, userName }, cancellationToken);
+		var item = await dbContext.Records.FindAsync([category, name, userName], cancellationToken);
 
 		if (item == null)
 		{
 			return NotFound();
 		}
 
-		DbContext.Records.Remove(item);
+		dbContext.Records.Remove(item);
 
 		try
 		{
-			await DbContext.SaveChangesAsync(cancellationToken);
+			await dbContext.SaveChangesAsync(cancellationToken);
 			return RedirectToAction("Edit", "Achievement", new { id = category });
 		}
 		catch (DbUpdateException ex)
@@ -603,16 +573,16 @@ public class AchievementController : Controller
 	public async Task<IActionResult> ClearRecords(string category, string name, CancellationToken cancellationToken = default)
 	{
 		var items =
-			from i in DbContext.Records
+			from i in dbContext.Records
 			where i.CategoryName == category && i.AchievementName == name
 			select i;
 
-		DbContext.Records.RemoveRange(items);
+		dbContext.Records.RemoveRange(items);
 
 		try
 		{
-			await DbContext.SaveChangesAsync(cancellationToken);
-			Utility.AddMessage(MessageAccessor, OperationMessageLevel.Success, SharedResourcesLocalizer.Html.OperationSucceeded, Localizer.Html.RecordCleared);
+			await dbContext.SaveChangesAsync(cancellationToken);
+			Utility.AddMessage(messageAccessor, OperationMessageLevel.Success, sharedResourcesLocalizer.Html.OperationSucceeded, localizer.Html.RecordCleared);
 			return RedirectToAction("Edit", "Achievement", new { category, name });
 		}
 		catch (DbUpdateException ex)

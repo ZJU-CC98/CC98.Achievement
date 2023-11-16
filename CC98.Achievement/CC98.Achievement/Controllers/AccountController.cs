@@ -3,6 +3,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using Sakura.AspNetCore.Authentication;
 
 namespace CC98.Achievement.Controllers;
@@ -10,19 +11,9 @@ namespace CC98.Achievement.Controllers;
 /// <summary>
 /// 提供登录注销相关的功能。
 /// </summary>
-public class AccountController : Controller
+/// <param name="externalSignInManager">外部登录服务。</param>
+public class AccountController(ExternalSignInManager externalSignInManager) : Controller
 {
-	/// <inheritdoc />
-	public AccountController(ExternalSignInManager externalSignInManager)
-	{
-		ExternalSignInManager = externalSignInManager;
-	}
-
-	/// <summary>
-	/// 外部登录服务。
-	/// </summary>
-	private ExternalSignInManager ExternalSignInManager { get; }
-
 	/// <summary>
 	/// 执行登录操作。
 	/// </summary>
@@ -49,7 +40,7 @@ public class AccountController : Controller
 	[AllowAnonymous]
 	public async Task<IActionResult> LogOnCallback(string? returnUrl)
 	{
-		var principal = await ExternalSignInManager.SignInFromExternalCookieAsync();
+		var principal = await externalSignInManager.SignInFromExternalCookieAsync();
 
 		if (principal?.Identity == null)
 		{
@@ -73,7 +64,7 @@ public class AccountController : Controller
 	[Authorize]
 	public async Task<IActionResult> LogOff()
 	{
-		await ExternalSignInManager.SignOutAsync();
+		await externalSignInManager.SignOutAsync();
 		return RedirectToAction("Index", "Home");
 	}
 }

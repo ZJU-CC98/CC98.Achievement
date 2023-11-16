@@ -12,19 +12,6 @@ namespace CC98.Achievement.Controllers;
 /// </summary>
 public class HomeController : Controller
 {
-	/// <summary>
-	/// 日志服务对象。
-	/// </summary>
-	private ILogger<HomeController> Logger { get; }
-
-	/// <summary>
-	/// 初始化 <see cref="HomeController"/> 对象的新实例。
-	/// </summary>
-	/// <param name="logger"><see cref="ILogger{HomeController}"/> 服务对象。</param>
-	public HomeController(ILogger<HomeController> logger)
-	{
-		Logger = logger;
-	}
 
 	/// <summary>
 	/// 显示首页。
