@@ -14,24 +14,12 @@ namespace CC98.Achievement.Areas.Api;
 /// <summary>
 /// 为第三方 API 提供 RESTful 调用接口。
 /// </summary>
+/// <param name="dbContext">数据库上下文对象。</param>
 [Area("Api")]
 [Route("api")]
 [Authorize(Policies.ClientApp)]
-public class AchievementController : ControllerBase
+public class AchievementController(AchievementDbContext dbContext) : ControllerBase
 {
-	/// <summary>
-	/// 初始化 <see cref="AchievementController"/> 对象的新实例。
-	/// </summary>
-	/// <param name="dbContext"><see cref="AchievementDbContext"/> 服务对象。</param>
-	public AchievementController(AchievementDbContext dbContext)
-	{
-		DbContext = dbContext;
-	}
-
-	/// <summary>
-	/// 数据库上下文对象。
-	/// </summary>
-	private AchievementDbContext DbContext { get; }
 
 	/// <summary>
 	/// 用于获取当前登录的客户端的标识的辅助方法。
@@ -67,7 +55,7 @@ public class AchievementController : ControllerBase
 		var clientId = GetCurrentClientId();
 
 		var currentCategory =
-			await (from c in DbContext.Categories
+			await (from c in dbContext.Categories
 				   where c.AppId == clientId
 				   select c)
 				.Include(p => p.Items)
@@ -104,7 +92,7 @@ public class AchievementController : ControllerBase
 		// 否则，更新时忽略排序顺序
 		else
 		{
-			config.PropertiesToExcludeOnUpdate = new() { nameof(AchievementItem.SortOrder) };
+			config.PropertiesToExcludeOnUpdate = [nameof(AchievementItem.SortOrder)];
 		}
 
 		// 如果删除未列出项目，则设置分类名为对比条件
@@ -118,14 +106,14 @@ public class AchievementController : ControllerBase
 			// 如果要求删除未列出项目，则执行删除，删除同步的标准为当前 categoryName 匹配
 			if (info.Options.RemoveAllNonListedItems)
 			{
-				await DbContext.BulkInsertOrUpdateOrDeleteAsync(newItems, config, cancellationToken: cancellationToken);
+				await dbContext.BulkInsertOrUpdateOrDeleteAsync(newItems, config, cancellationToken: cancellationToken);
 			}
 			else
 			{
-				await DbContext.BulkInsertOrUpdateAsync(newItems, config, cancellationToken: cancellationToken);
+				await dbContext.BulkInsertOrUpdateAsync(newItems, config, cancellationToken: cancellationToken);
 			}
 
-			await DbContext.BulkSaveChangesAsync(cancellationToken: cancellationToken);
+			await dbContext.BulkSaveChangesAsync(cancellationToken: cancellationToken);
 			return new AchievementRegisterResponse();
 		}
 		catch (DbUpdateException ex)
@@ -147,7 +135,7 @@ public class AchievementController : ControllerBase
 		var clientId = GetCurrentClientId();
 
 		var currentCategory =
-			await (from c in DbContext.Categories
+			await (from c in dbContext.Categories
 				   where c.AppId == clientId
 				   select c)
 				.SingleOrDefaultAsync(cancellationToken);
@@ -173,8 +161,8 @@ public class AchievementController : ControllerBase
 
 		try
 		{
-			await DbContext.BulkInsertOrUpdateAsync(updatedItems.ToArray(), cancellationToken: cancellationToken);
-			await DbContext.BulkSaveChangesAsync(cancellationToken: cancellationToken);
+			await dbContext.BulkInsertOrUpdateAsync(updatedItems.ToArray(), cancellationToken: cancellationToken);
+			await dbContext.BulkSaveChangesAsync(cancellationToken: cancellationToken);
 			return NoContent();
 		}
 		catch (DbUpdateException ex)
@@ -199,7 +187,7 @@ public class AchievementController : ControllerBase
 		var cancellationToken = HttpContext.RequestAborted;
 		var clientId = GetCurrentClientId();
 
-		var items = from i in DbContext.Records
+		var items = from i in dbContext.Records
 					where i.Achievement.Category.AppId == clientId
 					select i;
 
@@ -241,7 +229,7 @@ public class AchievementController : ControllerBase
 		var clientId = GetCurrentClientId();
 
 		var items =
-			from r in DbContext.Records
+			from r in dbContext.Records
 			where r.Achievement.Category.AppId == clientId && r.UserName == userName
 			select new RecordInfo
 			{
@@ -266,7 +254,7 @@ public class AchievementController : ControllerBase
 
 		var clientId = GetCurrentClientId();
 		var category =
-			await (from c in DbContext.Categories
+			await (from c in dbContext.Categories
 				   where c.AppId == clientId
 				   select c).SingleOrDefaultAsync(cancellationToken);
 
@@ -295,7 +283,7 @@ public class AchievementController : ControllerBase
 
 		var clientId = GetCurrentClientId();
 		var category =
-			await (from c in DbContext.Categories
+			await (from c in dbContext.Categories
 				   where c.AppId == clientId
 				   select c).SingleOrDefaultAsync(cancellationToken);
 
@@ -312,7 +300,7 @@ public class AchievementController : ControllerBase
 
 		try
 		{
-			await DbContext.SaveChangesAsync(cancellationToken);
+			await dbContext.SaveChangesAsync(cancellationToken);
 			return NoContent();
 		}
 		catch (DbUpdateException ex)

@@ -30,7 +30,7 @@
     <PackageReference Include="CC98.AppSetting" Version="3.0.0" />
     <PackageReference Include="CC98.Authentication.OpenIdConnect" Version="2.0.1" />
     <PackageReference Include="CC98.Identity.Scopes" Version="2.0.1" />
-    <PackageReference Include="EFCore.BulkExtensions.SqlServer" Version="7.1.6" />
+    <PackageReference Include="EFCore.BulkExtensions.SqlServer" Version="8.0.0" />
     <PackageReference Include="IdentityModel.AspNetCore.OAuth2Introspection" Version="6.2.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
