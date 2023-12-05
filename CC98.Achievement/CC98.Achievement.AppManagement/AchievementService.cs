@@ -15,37 +15,15 @@ namespace CC98.Achievement.AppManagement;
 /// <summary>
 /// 提供成就的相关管理服务。
 /// </summary>
+/// <param name="httpClient">用于后台通信的 HTTP 服务。</param>
+/// <param name="options">服务选项。</param>
 [PublicAPI]
-public class AchievementService
+public class AchievementService(HttpClient httpClient, AchievementServiceOptions options)
 {
-	/// <summary>
-	/// 用于进行后台通信的 HTTP 客户端。
-	/// </summary>
-	private HttpClient HttpClient { get; }
-
-	/// <summary>
-	/// 配置选项。
-	/// </summary>
-	private AchievementServiceOptions Options { get; }
-
 	/// <summary>
 	/// 用于包装 RESTful 操作的服务对象。
 	/// </summary>
 	private RestClient? RestClient { get; set; }
-
-
-
-	/// <summary>
-	/// 初始化 <see cref="AchievementService"/> 对象的新实例。
-	/// </summary>
-	/// <param name="httpClient"><see cref="System.Net.Http.HttpClient"/> 服务对象。</param>
-	/// <param name="options">服务相关的配置选项。</param>
-	/// <exception cref="ArgumentNullException"><paramref name="httpClient"/> 或 <paramref name="options"/> 为 <c>null</c>。</exception>
-	public AchievementService(HttpClient httpClient, AchievementServiceOptions options)
-	{
-		HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-		Options = options ?? throw new ArgumentNullException(nameof(options));
-	}
 
 	/// <summary>
 	/// 初始化 RESTful 服务。
@@ -100,18 +78,17 @@ public class AchievementService
 	public async Task LogOnAsClientAsync(CancellationToken cancellationToken = default)
 	{
 		var document =
-			await HttpClient.GetDiscoveryDocumentAsync(Options.Authority ?? AchievementServiceDefaults.Authority,
-				cancellationToken);
+			await httpClient.GetDiscoveryDocumentAsync(options.Authority, cancellationToken);
 
 		if (document.IsError)
 		{
 			throw new InvalidOperationException(document.Error);
 		}
 
-		var tokenResponse = await HttpClient.RequestClientCredentialsTokenAsync(new()
+		var tokenResponse = await httpClient.RequestClientCredentialsTokenAsync(new()
 		{
-			ClientId = Options.ClientId ?? throw new InvalidOperationException("未提供客户端标识。"),
-			ClientSecret = Options.ClientSecret ?? throw new InvalidOperationException("未提供客户端机密"),
+			ClientId = options.ClientId ?? throw new InvalidOperationException("未提供客户端标识。"),
+			ClientSecret = options.ClientSecret ?? throw new InvalidOperationException("未提供客户端机密"),
 			Address = document.TokenEndpoint,
 			Scope = AchievementScopes.PushAchievement,
 		}, cancellationToken);
@@ -122,14 +99,14 @@ public class AchievementService
 		}
 
 
-		var options = new RestClientOptions
+		var restOptions = new RestClientOptions
 		{
-			BaseUrl = new(Options.ApiBaseUri ?? AchievementServiceDefaults.ApiBaseUri, UriKind.RelativeOrAbsolute),
+			BaseUrl = new(options.ApiBaseUri, UriKind.RelativeOrAbsolute),
 			Authenticator =
 				new OAuth2AuthorizationRequestHeaderAuthenticator(tokenResponse.AccessToken!, tokenResponse.TokenType!),
 		};
 
-		RestClient = new(HttpClient, options);
+		RestClient = new(httpClient, restOptions);
 	}
 
 	/// <summary>
@@ -142,10 +119,7 @@ public class AchievementService
 	public async Task<AchievementRegisterResponse> RegisterAchievementsAsync(AchievementRegisterInfo info,
 		CancellationToken cancellationToken = default)
 	{
-		if (info == null)
-		{
-			throw new ArgumentNullException(nameof(info));
-		}
+		ArgumentNullException.ThrowIfNull(info);
 
 		await EnsureLogOnAsync(cancellationToken);
 		return await RestClient!.TryExecuteJsonAsync<AchievementRegisterInfo, AchievementRegisterResponse>(
@@ -175,10 +149,7 @@ public class AchievementService
 	/// <exception cref="InvalidOperationException">更新成就信息失败。</exception>
 	public async Task SetUserAchievementsAsync(UserAchievementListInfo info, CancellationToken cancellationToken = default)
 	{
-		if (info == null)
-		{
-			throw new ArgumentNullException(nameof(info));
-		}
+		ArgumentNullException.ThrowIfNull(info);
 
 		await EnsureLogOnAsync(cancellationToken);
 		await RestClient!.TryExecuteJsonAsync(Method.Post, "user-achievement", info, cancellationToken);
@@ -203,7 +174,8 @@ public class AchievementService
 	/// <returns>表示异步操作的任务。</returns>
 	public async Task UpdateCategoryInfoAsync(CategoryInfo info, CancellationToken cancellationToken = default)
 	{
-		if (info == null) throw new ArgumentNullException(nameof(info));
+		ArgumentNullException.ThrowIfNull(info);
+
 		await EnsureLogOnAsync(cancellationToken);
 		await RestClient!.TryExecuteJsonAsync(Method.Put, "category", info, cancellationToken);
 	}

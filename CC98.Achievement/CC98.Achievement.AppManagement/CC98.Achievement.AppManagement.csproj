@@ -6,6 +6,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Description>为 CC98 应用程序发布成就信息提供后端支持。</Description>
     <Title>CC98 成就系统接口</Title>
+    <RootNamespace>CC98.Achievement</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

@@ -158,7 +158,6 @@ public class AchievementController(AchievementDbContext dbContext) : ControllerB
 				UserName = info.UserName
 			};
 
-
 		try
 		{
 			await dbContext.BulkInsertOrUpdateAsync(updatedItems.ToArray(), cancellationToken: cancellationToken);

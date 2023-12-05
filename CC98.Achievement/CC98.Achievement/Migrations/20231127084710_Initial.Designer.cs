@@ -12,66 +12,63 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CC98.Achievement.Migrations
 {
     [DbContext(typeof(AchievementDbContext))]
-    [Migration("20220914082441_AddRewardAndAppCount")]
-    partial class AddRewardAndAppCount
+    [Migration("20231127084710_Initial")]
+    partial class Initial
     {
+        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.8")
+                .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("CC98.Achievement.Data.AchievementCategory", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("CodeName")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<string>("AppIconUri")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AppId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("CodeName")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                    b.Property<string>("DefaultHideIconUri")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DefaultIconUri")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DisplayName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("UserCount")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("CodeName");
 
-                    b.HasAlternateKey("CodeName");
+                    b.HasIndex("AppId")
+                        .IsUnique()
+                        .HasFilter("[AppId] IS NOT NULL");
 
-                    b.HasIndex("AppId");
+                    b.HasIndex("DisplayName");
 
                     b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("CC98.Achievement.Data.AchievementItem", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("CategoryId")
-                        .IsRequired()
-                        .HasColumnType("int");
+                    b.Property<string>("CategoryName")
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("CodeName")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -86,35 +83,41 @@ namespace CC98.Achievement.Migrations
                     b.Property<string>("IconUri")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsDynamic")
+                        .HasColumnType("bit");
+
                     b.Property<int?>("MaxValue")
                         .HasColumnType("int");
 
                     b.Property<string>("Reward")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
                     b.Property<int>("State")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("CategoryName", "CodeName");
 
-                    b.HasAlternateKey("CategoryId", "CodeName");
-
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("CategoryName", "SortOrder");
 
                     b.ToTable("Items");
                 });
 
             modelBuilder.Entity("CC98.Achievement.Data.AchievementRecord", b =>
                 {
-                    b.Property<int>("AchievementId")
-                        .HasMaxLength(256)
-                        .HasColumnType("int");
+                    b.Property<string>("CategoryName")
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("AchievementName")
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
-                    b.Property<int>("CurrentValue")
+                    b.Property<int?>("CurrentValue")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsCompleted")
@@ -123,24 +126,53 @@ namespace CC98.Achievement.Migrations
                     b.Property<DateTimeOffset>("Time")
                         .HasColumnType("datetimeoffset");
 
-                    b.HasKey("AchievementId", "UserName");
-
-                    b.HasIndex("AchievementId");
+                    b.HasKey("CategoryName", "AchievementName", "UserName");
 
                     b.HasIndex("UserName");
 
-                    b.HasIndex("AchievementId", "IsCompleted", "Time");
-
                     b.HasIndex("UserName", "IsCompleted", "Time");
 
+                    b.HasIndex("CategoryName", "AchievementName", "IsCompleted", "Time");
+
                     b.ToTable("Records");
+                });
+
+            modelBuilder.Entity("CC98.Achievement.Data.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("UserId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Gender")
+                        .HasColumnType("int")
+                        .HasColumnName("Sex");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("UserName");
+
+                    b.Property<string>("PortraitUri")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("face");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("Name");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("CC98.Achievement.Data.AchievementItem", b =>
                 {
                     b.HasOne("CC98.Achievement.Data.AchievementCategory", "Category")
                         .WithMany("Items")
-                        .HasForeignKey("CategoryId")
+                        .HasForeignKey("CategoryName")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -150,8 +182,8 @@ namespace CC98.Achievement.Migrations
             modelBuilder.Entity("CC98.Achievement.Data.AchievementRecord", b =>
                 {
                     b.HasOne("CC98.Achievement.Data.AchievementItem", "Achievement")
-                        .WithMany()
-                        .HasForeignKey("AchievementId")
+                        .WithMany("Records")
+                        .HasForeignKey("CategoryName", "AchievementName")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -161,6 +193,11 @@ namespace CC98.Achievement.Migrations
             modelBuilder.Entity("CC98.Achievement.Data.AchievementCategory", b =>
                 {
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("CC98.Achievement.Data.AchievementItem", b =>
+                {
+                    b.Navigation("Records");
                 });
 #pragma warning restore 612, 618
         }
