@@ -3,6 +3,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace CC98.Achievement.Controllers;
@@ -20,6 +21,16 @@ public class HomeController : Controller
 	public IActionResult Index()
 	{
 		return RedirectToAction("Index", "Achievement");
+	}
+
+	/// <summary>
+	/// 显示帮助页面。
+	/// </summary>
+	/// <returns>操作结果。</returns>
+	[AllowAnonymous]
+	public IActionResult Help()
+	{
+		return View();
 	}
 
 	/// <summary>

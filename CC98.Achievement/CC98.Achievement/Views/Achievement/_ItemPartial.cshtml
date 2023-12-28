@@ -5,19 +5,6 @@
 	// 分类信息
 	var category = (AchievementCategory)ViewBag.Category;
 
-	var borderClasses = new Dictionary<string, bool>
-			{
-				["border-success"] = Model.CompleteState == AchievementCompleteState.Completed,
-				["border-primary"] = Model.CompleteState == AchievementCompleteState.Progress
-			};
-
-	var footerClasses = new Dictionary<string, bool>
-			{
-				["bg-success text-white"] = Model.CompleteState == AchievementCompleteState.Completed,
-				//["bg-primary text-white"] = Model.CompleteState == AchievementCompleteState.Progress
-			};
-
-
 	// 是否已经完成，这影响是否彩色显示
 	var isCompleted = Model.CompleteState == AchievementCompleteState.Completed;
 
@@ -29,12 +16,6 @@
 		shouldHide
 			? AppSettingService.Current.HiddenItemTemplate
 			: Model.Item;
-
-	// 弹出页的元素 ID
-	var popoverElementId =
-		shouldHide
-			? null
-			: $"popover-content-{Model.Item.CategoryName}-{Model.Item.CodeName}";
 
 	// 成就底色
 	var cardColor = Model.Item.State switch
@@ -49,7 +30,6 @@
 		cardColor = string.Empty;
 	}
 }
-
 
 <div class="special card @cardColor">
 

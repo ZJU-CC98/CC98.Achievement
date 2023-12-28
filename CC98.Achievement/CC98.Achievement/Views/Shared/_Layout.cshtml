@@ -23,6 +23,8 @@
 			<div class="ui container">
 				<div class="header item">CC98 成就系统</div>
 				<a class="item" asp-controller="Achievement" asp-action="Index">成就一览</a>
+				<a class="item" asp-controller="Home" asp-action="Help">帮助</a>
+
 				<div class="ui dropdown item" asp-authorize-policy="@Policies.Edit">
 					<span class="text">管理</span>
 					<i class="dropdown icon"></i>

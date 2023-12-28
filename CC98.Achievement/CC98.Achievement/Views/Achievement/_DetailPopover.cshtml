@@ -2,26 +2,28 @@
 @model AchievementAndUserRecordInfo
 @inject IViewLocalizer ViewLocalizer
 
-<div class="ui popup">
-	<div class="header">@Model.Item.DisplayName</div>
-	<div class="content">@Model.Item.Description</div>
-	<div class="ui divider"></div>
+<div class="ui popup card">
 	<div class="content">
-
-		@if (Model.Record != null)
-		{
-			if (Model.Record.IsCompleted)
+		<div class="header">@Model.Item.DisplayName</div>
+		
+		<div class="meta">
+			@if (Model.Record != null)
 			{
-				<span class="text-success">@ViewLocalizer["完成于 {0:g}", Model.Record.Time]</span>
+				if (Model.Record.IsCompleted)
+				{
+					<i class="green check icon"></i> <span>@ViewLocalizer["获得于 {0:g}", Model.Record.Time]</span>
+				}
+				else
+				{
+					<i class="blue clock icon"></i> <span>@ViewLocalizer["进度 {0}/{1}", Model.Record.CurrentValue!, Model.Item.MaxValue!]</span>
+				}
 			}
 			else
 			{
-				<span class="text-primary">@ViewLocalizer["进度 {0}/{1}", Model.Record.CurrentValue!, Model.Item.MaxValue!]</span>
+				<span>尚未获得</span>
 			}
-		}
-		else
-		{
-			<span>你还没有获得这项成就</span>
-		}
+		</div>
+
+		<div class="description">@Model.Item.Description</div>
 	</div>
 </div>

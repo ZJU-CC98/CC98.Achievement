@@ -17,11 +17,11 @@
 				<div class="header">@item.Item.DisplayName</div>
 				<div class="description">
 					<div class="ui small @statItemCount statistics">
-						<div class="statistic" data-tooltip="你已经获得的普通和隐藏成就的总数">
+						<div class="statistic" data-tooltip="你已经获得的普通和隐藏成就的总数。">
 							<div class="value">@item.UserFinishedCount</div>
 							<div class="label">完成</div>
 						</div>
-						<div class="statistic" data-tooltip="所有普通和隐藏成就的总数">
+						<div class="statistic" data-tooltip="所有普通和隐藏成就的总数。">
 							<div class="value">@item.VisibleAchievementCount</div>
 							<div class="label">总数</div>
 						</div>
@@ -39,6 +39,10 @@
 
 			<div class="extra">
 				<i class="users icon"></i> @item.Item.UserCount 名用户正在参与
+			</div>
+			
+			<div class="ui bottom blue attached progress" data-value="@item.UserFinishedCount" data-total="@item.VisibleAchievementCount">
+				<div class="bar"></div>
 			</div>
 
 
