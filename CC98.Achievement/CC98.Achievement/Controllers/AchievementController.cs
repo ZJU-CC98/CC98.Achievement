@@ -165,11 +165,12 @@ public class AchievementController(AchievementDbContext dbContext, IOperationMes
 	/// 列出特定分类的成就一览。
 	/// </summary>
 	/// <param name="category">分类名称。</param>
+	/// <param name="search">搜索相关设置。</param>
 	/// <param name="page">页码。</param>
 	/// <param name="cancellationToken">用于取消操作的令牌。</param>
 	/// <returns>操作结果。</returns>
 	[Route("[controller]/[action]/{category}")]
-	public async Task<IActionResult> List(string category, int page = 1, CancellationToken cancellationToken = default)
+	public async Task<IActionResult> List(string category, UserSearchModel search, int page = 1, CancellationToken cancellationToken = default)
 	{
 		// 检索分类信息
 		var categoryData =
@@ -185,6 +186,7 @@ public class AchievementController(AchievementDbContext dbContext, IOperationMes
 
 		// 附加到视图数据
 		ViewBag.Category = categoryData;
+		ViewBag.Search = search;
 
 		var userName = User.Identity?.Name;
 
@@ -194,31 +196,70 @@ public class AchievementController(AchievementDbContext dbContext, IOperationMes
 			where i.CategoryName == category
 			select i;
 
+		// 如果指定了类型，则筛选类型
+		if (search.State != null)
+		{
+			items = from i in items
+					where i.State == search.State
+					select i;
+		}
+
 		// 筛选出当前用户的所有记录
 		var userRecords =
 			from r in dbContext.Records
 			where r.UserName == userName
 			select r;
 
-		// 跳过所有用户未完成的特殊成
+		// 跳过所有用户未完成的特殊成就
 		// 隐藏成就在此处仍然包括，显示部分进行隐藏处理
-		var result =
+		var itemWithRecord =
 			from i in items
 			join r in userRecords
 				on new { i.CategoryName, i.CodeName } equals new { r.CategoryName, CodeName = r.AchievementName } into
 				rs
 			from r in rs.DefaultIfEmpty()
 			where r.IsCompleted || i.State != AchievementState.Special
-			let sortHint =
-				i.State == AchievementState.Normal
-					? 100
-					: Convert.ToInt32(r.IsCompleted)
-			orderby sortHint descending, i.SortOrder // 先显示完成的
-			select new AchievementAndUserRecordInfo
+			select new { Item = i, Record = r };
+
+		// 完成状态判断
+		if (search.CompleteState != null)
+		{
+			switch (search.CompleteState.Value)
 			{
-				Item = i,
-				Record = r
-			};
+				case AchievementCompleteState.None:
+					itemWithRecord = itemWithRecord.Where(i => i.Record.AchievementName == null!);
+					break;
+				case AchievementCompleteState.Progress:
+					itemWithRecord = itemWithRecord.Where(i => i.Record.AchievementName != null! && !i.Record.IsCompleted);
+					break;
+				case AchievementCompleteState.Completed:
+					itemWithRecord = itemWithRecord.Where(i => i.Record.IsCompleted);
+					break;
+			}
+		}
+
+		// 名字判断
+		if (!string.IsNullOrEmpty(search.Keyword))
+		{
+			itemWithRecord =
+				from i in itemWithRecord
+				let isHidden = i.Item.State != AchievementState.Normal && !i.Record.IsCompleted
+				where !isHidden && i.Item.DisplayName.Contains(search.Keyword)
+				select i;
+		}
+
+		// 最终结果
+		var result = from i in itemWithRecord
+					 let sortHint =
+						 i.Item.State == AchievementState.Normal
+							 ? 100
+							 : Convert.ToInt32(i.Record.IsCompleted)
+					 orderby sortHint descending, i.Item.SortOrder // 先显示完成的
+					 select new AchievementAndUserRecordInfo
+					 {
+						 Item = i.Item,
+						 Record = i.Record
+					 };
 
 		return View(await result.ToPagedListAsync(12, page, cancellationToken));
 	}

@@ -7,18 +7,11 @@ namespace CC98.Achievement.Data;
 /// <summary>
 /// 表示成就系统数据库上下文对象。
 /// </summary>
+/// <param name="options">数据库上下文对象。</param>
 [UsedImplicitly(ImplicitUseKindFlags.Assign | ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature, ImplicitUseTargetFlags.Members)]
-public class AchievementDbContext : DbContext
+public class AchievementDbContext(DbContextOptions<AchievementDbContext> options)
+	: DbContext(options)
 {
-	/// <summary>
-	/// 初始化 <see cref="AchievementDbContext"/> 对象的新实例。
-	/// </summary>
-	/// <param name="options">数据库上下文的相关选项。</param>
-	public AchievementDbContext(DbContextOptions<AchievementDbContext> options)
-		: base(options)
-	{
-
-	}
 
 	/// <summary>
 	/// 获取数据库所有成就项的集合。
