@@ -17,17 +17,17 @@
 				<div class="header">@item.Item.DisplayName</div>
 				<div class="description">
 					<div class="ui small @statItemCount statistics">
-						<div class="statistic">
+						<div class="statistic" data-tooltip="你已经获得的普通和隐藏成就的总数">
 							<div class="value">@item.UserFinishedCount</div>
 							<div class="label">完成</div>
 						</div>
-						<div class="statistic">
+						<div class="statistic" data-tooltip="所有普通和隐藏成就的总数">
 							<div class="value">@item.VisibleAchievementCount</div>
 							<div class="label">总数</div>
 						</div>
 						@if (item.UserSpecialCount > 0)
 						{
-							<div class="green statistic">
+							<div class="green statistic" data-tooltip="你获得的特殊成就的数量。特殊成就不计入成就总数。">
 								<div class="value">+@item.UserSpecialCount</div>
 								<div class="label">特殊</div>
 							</div>

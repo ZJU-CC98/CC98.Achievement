@@ -1,47 +1,27 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
-@model AchievementItem
+@model AchievementAndUserRecordInfo
 @inject IViewLocalizer ViewLocalizer
-@{
-	var record = (AchievementRecord?)ViewBag.Record;
-}
 
-@if (!string.IsNullOrEmpty(Model.Description))
-{
-	<div class="card-text">@Model.Description</div>
-	<hr />
-}
+<div class="ui popup">
+	<div class="header">@Model.Item.DisplayName</div>
+	<div class="content">@Model.Item.Description</div>
+	<div class="ui divider"></div>
+	<div class="content">
 
-@if (record != null)
-{
-	<strong>进度</strong>
-	<div class="card-text">
-
-		@if (record.IsCompleted)
+		@if (Model.Record != null)
 		{
-			<span class="text-success">已完成</span>
+			if (Model.Record.IsCompleted)
+			{
+				<span class="text-success">@ViewLocalizer["完成于 {0:g}", Model.Record.Time]</span>
+			}
+			else
+			{
+				<span class="text-primary">@ViewLocalizer["进度 {0}/{1}", Model.Record.CurrentValue!, Model.Item.MaxValue!]</span>
+			}
 		}
 		else
 		{
-			<span class="text-primary">@ViewLocalizer["{0}/{1}", record.CurrentValue!, Model.MaxValue!]</span>
+			<span>你还没有获得这项成就</span>
 		}
-
 	</div>
-
-	<hr />
-}
-
-@if (!string.IsNullOrEmpty(Model.Hint))
-{
-	<strong>提示</strong>
-	<div class="card-text">@Model.Hint</div>
-	<hr />
-}
-
-@if (!string.IsNullOrEmpty(Model.Reward))
-{
-	<strong>奖励</strong>
-	<div class="card-text">@Model.Reward</div>
-	<hr />
-}
-
-<div class="card-text"><code>@Model.CodeName</code></div>
+</div>

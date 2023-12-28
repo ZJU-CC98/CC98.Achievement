@@ -15,7 +15,7 @@
 			<partial name="_ItemPartial" model="@item" />
 		}
 	</div>
-	
+
 	<div class="ui hidden divider"></div>
 
 	<pager />
@@ -23,4 +23,16 @@
 else
 {
 	<div class="text-center text-muted">这里没有可以显示的项目</div>
+}
+
+@section Scripts
+{
+	<script>
+
+		$(function () {
+
+			$('.card .ui.image').popup();
+		});
+
+	</script>
 }

@@ -36,10 +36,6 @@
 			? null
 			: $"popover-content-{Model.Item.CategoryName}-{Model.Item.CodeName}";
 
-
-	// 记录对象，用于子模板
-	ViewBag.Record = Model.Record!;
-
 	// 成就底色
 	var cardColor = Model.Item.State switch
 	{
@@ -59,6 +55,12 @@
 
 	<div class="middle aligned content">
 		<img class="ui left floated tiny image" asp-conditional-class-gray="@(!isCompleted)" src="@GetRealIconUri(itemData, category, shouldHide)" alt="成就图标" />
+
+		@if (!shouldHide)
+		{
+			<partial name="_DetailPopover" model="@Model" />
+		}
+
 		<div class="header">@itemData.DisplayName</div>
 		<div class="description">@itemData.Description</div>
 
@@ -75,27 +77,23 @@
 				{
 					case AchievementState.Special:
 						<div class="ui yellow right corner label">
-							<i class="star icon"></i>
+							<div data-tooltip="这是一个特殊成就。在你获得这个成就之前，你无法看到这个成就的任何信息。你获得的特殊成就数量将单独记录在成就数据页面，不计入成就总数。">
+								<i class="star icon"></i>
+							</div>
 						</div>
+
 						break;
 					case AchievementState.Hidden:
 						<div class="ui purple right corner label">
-							<i class="star outline icon"></i>
+							<div data-tooltip="这是一个隐藏成就。在你获得这个成就之前，你只能看到“隐藏的成就”字样。">
+								<i class="star outline icon"></i>
+							</div>
 						</div>
 						break;
 				}
-
-				@*<div class="ui teal right corner label">
-	<i class="check icon"></i>
-	</div>*@
-
 				break;
+
 			case AchievementCompleteState.Progress:
-
-				@*<div class="ui blue right corner label">
-	<i class="clock icon"></i>
-	</div>*@
-
 
 				<div class="ui bottom blue attached progress" data-value="@Model.Record.CurrentValue" data-total="@Model.Item.MaxValue">
 					<div class="bar"></div>
@@ -103,12 +101,6 @@
 
 				break;
 		}
-	}
-
-
-	@if (Model is { Record: not null, CompleteState: AchievementCompleteState.Progress })
-	{
-
 	}
 
 </div>
