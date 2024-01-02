@@ -1,9 +1,20 @@
 ﻿@using CC98
+@using CC98.Achievement.Controllers
+@using Microsoft.AspNetCore.DataProtection
+@using System.Diagnostics
 @model AchievementAndUserRecordInfo
 @inject AppSettingService<SystemSetting> AppSettingService
+@inject IDataProtectionProvider DataProtectionProvider
+
 @{
 	// 分类信息
 	var category = (AchievementCategory)ViewBag.Category;
+
+	// 数据保护服务
+	var dataProtector = DataProtectionProvider.CreateProtector(nameof(AchievementDbContext), category.CodeName.ToLowerInvariant());
+	var code = dataProtector.Protect(Model.Item.CodeName);
+
+	Debug.WriteLine("Name = {0}, Code = {1}", Model.Item.CodeName, code);
 
 	// 是否已经完成，这影响是否彩色显示
 	var isCompleted = Model.CompleteState == AchievementCompleteState.Completed;
@@ -31,18 +42,35 @@
 	}
 }
 
-<div class="special card @cardColor">
+<a class="special card @cardColor" asp-controller="Achievement" asp-action="Detail" asp-route-category="@category.CodeName" asp-route-name="@code">
 
 	<div class="middle aligned content">
-		<img class="ui left floated tiny image" asp-conditional-class-gray="@(!isCompleted)" src="@GetRealIconUri(itemData, category, shouldHide)" alt="成就图标" />
+
+		<div style="display: flex; flex-direction: row; color: rgba(0,0,0,0.85);">
+			<div style="flex: 0 0 content;">
+
+				<img class="ui tiny image" asp-conditional-class-gray="@(!isCompleted)" src="@GetRealIconUri(itemData, category, shouldHide)" alt="成就图标" style=""/>
+
+				@if (!shouldHide)
+				{
+					<partial name="_DetailPopover" model="@Model"/>
+				}
+			</div>
+			<div class="content" style="flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; margin-left: 1rem;">
+				<h3 class="header">@itemData.DisplayName</h3>
+				<div class="description">@itemData.Description</div>
+			</div>
+		</div>
+
+		@* 		<img class="ui left floated tiny image" asp-conditional-class-gray="@(!isCompleted)" src="@GetRealIconUri(itemData, category, shouldHide)" alt="成就图标" />
 
 		@if (!shouldHide)
 		{
-			<partial name="_DetailPopover" model="@Model" />
+		<partial name="_DetailPopover" model="@Model" />
 		}
 
 		<div class="header">@itemData.DisplayName</div>
-		<div class="description">@itemData.Description</div>
+		<div class="description">@itemData.Description</div> *@
 
 	</div>
 
@@ -83,7 +111,7 @@
 		}
 	}
 
-</div>
+</a>
 
 @functions
 {

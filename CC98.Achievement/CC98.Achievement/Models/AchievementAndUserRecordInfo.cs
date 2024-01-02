@@ -1,7 +1,5 @@
 ﻿using CC98.Achievement.Data;
 
-using Microsoft.Extensions.Logging.Abstractions;
-
 namespace CC98.Achievement.Models;
 
 /// <summary>
@@ -18,11 +16,6 @@ public class AchievementAndUserRecordInfo
 	/// 成就关联的用户记录。如果用户未登录或者未获得成就则为 <c>null</c>。
 	/// </summary>
 	public AchievementRecord? Record { get; set; }
-
-	/// <summary>
-	/// 关联的榕湖。
-	/// </summary>
-	public User User { get; set; } = null!;
 
 	/// <summary>
 	/// 获取当前成就的完成状态。

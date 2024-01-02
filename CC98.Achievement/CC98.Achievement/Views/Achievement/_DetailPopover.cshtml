@@ -5,6 +5,10 @@
 <div class="ui popup card">
 	<div class="content">
 		<div class="header">@Model.Item.DisplayName</div>
+		<div class="description">@Model.Item.Description</div>
+		
+	</div>
+	<div class="extra content">
 		
 		<div class="meta">
 			@if (Model.Record != null)
@@ -23,7 +27,5 @@
 				<span>尚未获得</span>
 			}
 		</div>
-
-		<div class="description">@Model.Item.Description</div>
 	</div>
 </div>

@@ -117,6 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="GetTime" xml:space="preserve">
+    <value>获得于 {0:g}</value>
+    <comment>{0}: 获得时间</comment>
+  </data>
   <data name="Title" xml:space="preserve">
     <value>成就详情 - {0}</value>
     <comment>{0}: 成就标题</comment>

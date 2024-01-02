@@ -91,6 +91,9 @@ builder.Services.AddAuthorization(options =>
 		pb => pb.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser());
 });
 
+// 数据保护功能
+builder.Services.AddDataProtection();
+
 // 操作消息
 builder.Services.AddSingleton<IOperationMessageLevelClassMapper, SemanticUIMessageLevelClassMapper>();
 builder.Services.AddSingleton<IOperationMessageHtmlGenerator, SemanticUIMessageHtmlGenerator>();

@@ -90,6 +90,13 @@ $(function () {
 	// 初始化单选框和复选框
 	$('.ui.checkbox').checkbox();
 
+	// 初始化折叠区
+	$('.ui.accordion').accordion();
+
+	$('.dimmable.image').dimmer({
+		on: 'hover'
+	});
+
 	$('.ui.form').form();
 
 	// 初始化所有消息框的关闭按钮效果

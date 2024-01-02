@@ -1,7 +1,13 @@
-﻿using CC98.Achievement.Data;
+﻿using System.Globalization;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
+
+using CC98.Achievement.Data;
 using CC98.Achievement.Models;
 
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +24,8 @@ namespace CC98.Achievement.Controllers;
 /// <param name="messageAccessor">消息管理对象。</param>
 /// <param name="sharedResourcesLocalizer">共享的本地化资源。</param>
 /// <param name="localizer">本地化资源。</param>
-public class AchievementController(AchievementDbContext dbContext, IOperationMessageAccessor messageAccessor, IDynamicHtmlLocalizer<SharedResources> sharedResourcesLocalizer, IDynamicHtmlLocalizer<AchievementController> localizer) : Controller
+/// <param name="dataProtectionProvider">数据保护服务。</param>
+public partial class AchievementController(AchievementDbContext dbContext, IOperationMessageAccessor messageAccessor, IDynamicHtmlLocalizer<SharedResources> sharedResourcesLocalizer, IDynamicHtmlLocalizer<AchievementController> localizer, IDataProtectionProvider dataProtectionProvider) : Controller
 {
 
 	/// <summary>
@@ -249,17 +256,19 @@ public class AchievementController(AchievementDbContext dbContext, IOperationMes
 		}
 
 		// 最终结果
-		var result = from i in itemWithRecord
-					 let sortHint =
-						 i.Item.State == AchievementState.Normal
-							 ? 100
-							 : Convert.ToInt32(i.Record.IsCompleted)
-					 orderby sortHint descending, i.Item.SortOrder // 先显示完成的
-					 select new AchievementAndUserRecordInfo
-					 {
-						 Item = i.Item,
-						 Record = i.Record
-					 };
+		var result =
+			from i in itemWithRecord
+
+			let sortHint =
+				i.Item.State == AchievementState.Normal
+					? 100
+					: Convert.ToInt32(i.Record.IsCompleted)
+			orderby sortHint descending, i.Item.SortOrder // 先显示完成的
+			select new AchievementAndUserRecordInfo
+			{
+				Item = i.Item,
+				Record = i.Record,
+			};
 
 		return View(await result.ToPagedListAsync(12, page, cancellationToken));
 	}
@@ -430,10 +439,15 @@ public class AchievementController(AchievementDbContext dbContext, IOperationMes
 	/// <param name="userPage">用户列表页码。</param>
 	/// <param name="cancellationToken">用于取消操作的令牌。</param>
 	/// <returns>表示异步操作的任务。</returns>
-	[HttpGet]
+	[HttpGet("[controller]/[action]/{category}/{name}")]
 	public async Task<IActionResult> Detail(string category, string name, int userPage = 1, CancellationToken cancellationToken = default)
 	{
-		var item = await dbContext.Items.FindAsync([category, name], cancellationToken);
+
+		// 对名称解除保护
+		var dataProtector = dataProtectionProvider.CreateProtector(nameof(AchievementDbContext), category.ToLowerInvariant());
+		var realName = dataProtector.Unprotect(name);
+
+		var item = await dbContext.Items.FindAsync([category, realName], cancellationToken);
 
 		if (item == null)
 		{
@@ -444,7 +458,7 @@ public class AchievementController(AchievementDbContext dbContext, IOperationMes
 			await (from r in dbContext.Records
 				   join u in dbContext.Users
 					   on EF.Functions.Collate(r.UserName, "Chinese_PRC_CI_AS") equals u.Name
-				   where r.IsCompleted && r.CategoryName == category && r.AchievementName == name
+				   where r.IsCompleted && r.CategoryName == category && r.AchievementName == realName
 				   orderby r.Time descending
 				   select new RecordAndUserInfo
 				   {
