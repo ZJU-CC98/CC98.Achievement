@@ -1,6 +1,8 @@
-﻿using System.Security.Principal;
+﻿using System.Security.Claims;
+using System.Security.Principal;
 
 using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Sakura.AspNetCore;
 
@@ -84,5 +86,25 @@ public static class Utility
 	{
 		var firstError = errorCollection.FirstOrDefault();
 		return firstError?.ErrorMessage;
+	}
+
+	/// <summary>
+	/// 获取给定用户的用户名。
+	/// </summary>
+	/// <param name="user">用户主体对象。</param>
+	/// <returns>用户的名称。如果用户没有名称，返回 <c>null</c>。</returns>
+	public static string? GetUserName(this ClaimsPrincipal user)
+	{
+		return user.FindFirstValue(ClaimTypes.Name);
+	}
+
+	/// <summary>
+	/// 获取当前的用户名。
+	/// </summary>
+	/// <param name="controller">控制器对象。</param>
+	/// <returns>用户的名称。如果用户没有名称，返回 <c>null</c>。</returns>
+	public static string? GetUserName(this ControllerBase controller)
+	{
+		return controller.User.GetUserName();
 	}
 }

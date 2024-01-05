@@ -25,7 +25,8 @@ namespace CC98.Achievement.Controllers;
 /// <param name="sharedResourcesLocalizer">共享的本地化资源。</param>
 /// <param name="localizer">本地化资源。</param>
 /// <param name="dataProtectionProvider">数据保护服务。</param>
-public partial class AchievementController(AchievementDbContext dbContext, IOperationMessageAccessor messageAccessor, IDynamicHtmlLocalizer<SharedResources> sharedResourcesLocalizer, IDynamicHtmlLocalizer<AchievementController> localizer, IDataProtectionProvider dataProtectionProvider) : Controller
+/// <param name="systemSettingService">系统设置服务。</param>
+public partial class AchievementController(AchievementDbContext dbContext, IOperationMessageAccessor messageAccessor, IDynamicHtmlLocalizer<SharedResources> sharedResourcesLocalizer, IDynamicHtmlLocalizer<AchievementController> localizer, IDataProtectionProvider dataProtectionProvider, AppSettingService<SystemSetting> systemSettingService) : Controller
 {
 
 	/// <summary>
@@ -454,6 +455,38 @@ public partial class AchievementController(AchievementDbContext dbContext, IOper
 			return NotFound();
 		}
 
+		var myName = this.GetUserName();
+
+		// 获取当前用户的获取情况
+		AchievementRecord? myRecord;
+
+		if (string.IsNullOrEmpty(myName))
+		{
+			myRecord = null;
+		}
+		else
+		{
+			myRecord =
+				await (from i in dbContext.Records
+					where i.UserName == myName && i.CategoryName == item.CategoryName && i.AchievementName == item.CodeName select i).SingleOrDefaultAsync(cancellationToken);
+		}
+
+		// 是否已完成
+		var isCompleted = myRecord is { IsCompleted: true };
+
+		// 特殊成就无法查看
+		if (item.State == AchievementState.Special && !isCompleted)
+		{
+			return NotFound();
+		}
+
+		// 未获得的隐藏成就，替换为隐藏内容
+		if (item.State == AchievementState.Hidden && !isCompleted)
+		{
+			item = systemSettingService.Current.HiddenItemTemplate;
+		}
+
+		
 		var userRecords =
 			await (from r in dbContext.Records
 				   join u in dbContext.Users
