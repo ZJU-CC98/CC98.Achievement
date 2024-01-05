@@ -31,6 +31,13 @@
 	<div class="ui message">该分类的默认成就图标，当某个具体的成就没有设定图标时，将会使用该图标。如果未设置默认成就图标，则系统将使用全局默认图标。</div>
 </div>
 
+<div class="field" asp-for="DefaultGrayedIconUri">
+	<label asp-for="DefaultGrayedIconUri">默认成就图标灰色版</label>
+	<input asp-for="DefaultGrayedIconUri" type="url" placeholder="使用默认图标" />
+	<a asp-validation-for="DefaultGrayedIconUri" class="ui basic red pointing prompt label"></a>
+	<div class="ui message">该分类的默认成就图标的灰色版本。在成就未获得时，将会使用这个版本。如果你不提供灰色版图标，则系统将对常规图标应用灰度效果以产生灰色效果，但这种方法产生的灰色图标可能存在对比度不强等问题，因此建议你最好为图标专门设计灰色版本。</div>
+</div>
+
 <div class="field" asp-for="DefaultHideIconUri">
 	<label asp-for="DefaultHideIconUri">隐藏成就图标</label>
 	<input asp-for="DefaultHideIconUri" type="text" placeholder="使用系统默认设置" />

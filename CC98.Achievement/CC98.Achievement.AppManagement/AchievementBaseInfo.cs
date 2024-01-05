@@ -34,6 +34,12 @@ public abstract class AchievementBaseInfo
 	public string? IconUri { get; set; }
 
 	/// <summary>
+	/// 成就在灰显状态下的图标地址。如果不提供该信息，则默认使用 <see cref="IconUri"/> 的灰色版本。
+	/// </summary>
+	[Url]
+	public string? GrayedIconUri { get; set; }
+
+	/// <summary>
 	/// 如果提供了该字段，用户将可以在成就的详细信息页面看到如何获取这项成就的提示。
 	/// </summary>
 	public string? Hint { get; set; }

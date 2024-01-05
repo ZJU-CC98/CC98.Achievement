@@ -21,6 +21,12 @@ public class SystemSetting : IAppSettingWithDefaultValue<SystemSetting>
 	public string DefaultIconUri { get; set; } = null!;
 
 	/// <summary>
+	/// 默认的灰色成就图标的路径。如果该属性为 <c>null</c>，则会使用 <see cref="DefaultIconUri"/> 的灰色版本作为默认灰色图标。
+	/// </summary>
+	[Url]
+	public string? DefaultGrayedIconUri { get; set; }
+
+	/// <summary>
 	/// 隐藏成就的模板信息。
 	/// </summary>
 	public AchievementItem HiddenItemTemplate { get; set; } = new();

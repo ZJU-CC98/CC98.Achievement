@@ -76,10 +76,11 @@ public class AchievementController(AchievementDbContext dbContext) : ControllerB
 				 Description = i.Description,
 				 Hint = i.Hint,
 				 IconUri = i.IconUri,
+				 GrayedIconUri = i.GrayedIconUri,
 				 IsDynamic = i.IsDynamic,
 				 MaxValue = i.MaxValue,
 				 Reward = i.Reward,
-				 State = i.State
+				 State = i.State,
 			 }).ToArray();
 
 		var config = new BulkConfig();

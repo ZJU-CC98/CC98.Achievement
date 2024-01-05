@@ -14,8 +14,6 @@
 	var dataProtector = DataProtectionProvider.CreateProtector(nameof(AchievementDbContext), category.CodeName.ToLowerInvariant());
 	var code = dataProtector.Protect(Model.Item.CodeName);
 
-	Debug.WriteLine("Name = {0}, Code = {1}", Model.Item.CodeName, code);
-
 	// 是否已经完成，这影响是否彩色显示
 	var isCompleted = Model.CompleteState == AchievementCompleteState.Completed;
 
@@ -40,6 +38,8 @@
 	{
 		cardColor = string.Empty;
 	}
+
+	var (iconUri, shouldGrayedOut) = GetRealIconUri(itemData, category, shouldHide, isCompleted);
 }
 
 <a class="special card @cardColor" asp-controller="Achievement" asp-action="Detail" asp-route-category="@category.CodeName" asp-route-name="@code">
@@ -49,7 +49,7 @@
 		<div style="display: flex; flex-direction: row; color: rgba(0,0,0,0.85);">
 			<div style="flex: 0 0 content;">
 
-				<img class="ui tiny image" asp-conditional-class-gray="@(!isCompleted)" src="@GetRealIconUri(itemData, category, shouldHide)" alt="成就图标" style=""/>
+				<img class="ui tiny image" asp-conditional-class-gray="@shouldGrayedOut" src="@iconUri" alt="成就图标" style=""/>
 
 				@if (!shouldHide)
 				{
@@ -121,13 +121,55 @@
 	/// <param name="item">要显示的成就项目。</param>
 	/// <param name="category">成就项目对应的分类。</param>
 	/// <param name="isHidden">该项目是否隐藏</param>
-	/// <returns>实际显示项目的 URL。</returns>
-	private string GetRealIconUri(AchievementItem item, AchievementCategory category, bool isHidden)
+	/// <returns>实际显示项目的 URL，以及是否需要灰色显示图案。</returns>
+	private (string? Url, bool ShouldGrayedOut) GetRealIconUri(AchievementItem item, AchievementCategory category, bool isHidden, bool isCompleted)
 	{
-		return !isHidden
-			// 未隐藏项目：实际图标 -> 分类默认图标 -> 全局默认图标
-			? item.IconUri ?? category.DefaultIconUri ?? AppSettingService.Current.DefaultIconUri
-			// 隐藏项目：分类隐藏图标 -> 全局默认隐藏模板图标 -> 全局默认图标
-			: category.DefaultHideIconUri ?? AppSettingService.Current.HiddenItemTemplate.IconUri ?? AppSettingService.Current.DefaultIconUri;
+		var setting = AppSettingService.Current;
+
+		// 正常图标: 专属 -> 分类 -> 全局
+		(string? Url, bool ShouldGrayedOut)[] normalIconSources =
+		[
+			(item.IconUri, false),
+			(category.DefaultIconUri, false),
+			(setting.DefaultIconUri, false)
+		];
+
+		// 隐藏图标: 分类隐藏 -> 全局隐藏模板
+		(string? Url, bool ShouldGrayedOut)[] hiddenIconSources =
+		[
+			(category.DefaultHideIconUri, false),
+			(setting.HiddenItemTemplate.IconUri, false),
+		];
+
+		// 灰色图标：专属灰色 -> 专属图标灰度版 -> 分类灰色 -> 分类图标灰度版 -> 默认灰色 -> 默认图标灰度版
+		(string? Url, bool ShouldGrayedOut)[] grayIconSources =
+		[
+			(item.GrayedIconUri, false),
+			(item.IconUri, true),
+			(category.DefaultGrayedIconUri, false),
+			(category.DefaultIconUri, true),
+			(setting.DefaultGrayedIconUri, false),
+			(setting.DefaultIconUri, true)
+		];
+
+		// 选择实际使用的图标系列
+		// 隐藏的项目始终使用隐藏图标
+		// 不需要隐藏的项目，根据是否完成，显示正常或灰色图标
+		var realSource = (isHidden, isCompleted) switch
+		{
+			(true, _) => hiddenIconSources,
+			(false, true) => normalIconSources,
+			(false, false) => grayIconSources
+		};
+
+		foreach (var i in realSource)
+		{
+			if (!string.IsNullOrEmpty(i.Url))
+			{
+				return i;
+			}
+		}
+
+		throw new InvalidOperationException("无法找到合适的图标进行显示。请联系管理员修改配置。");
 	}
 }

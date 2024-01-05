@@ -51,6 +51,12 @@ public class AchievementCategory
 	public string? DefaultIconUri { get; set; }
 
 	/// <summary>
+	/// 该分类使用的默认灰色图标。如果设置为 <c>null</c>，则会使用 <see cref="DefaultIconUri"/> 的灰色版本。
+	/// </summary>
+	[Url]
+	public string? DefaultGrayedIconUri { get; set; }
+
+	/// <summary>
 	/// 该分类使用的默认隐藏图标。如果设置为 <c>null</c>，则使用系统全局隐藏模板定义的图标。
 	/// </summary>
 	[Url]

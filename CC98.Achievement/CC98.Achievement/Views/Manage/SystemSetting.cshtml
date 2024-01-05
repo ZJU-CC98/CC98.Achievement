@@ -18,10 +18,17 @@
 					<div class="ui large dividing header">显示设置</div>
 
 					<div class="field" asp-for="DefaultIconUri">
-						<label asp-for="DefaultIconUri">成就分类</label>
+						<label asp-for="DefaultIconUri">默认成就图标</label>
 						<input type="url" asp-for="DefaultIconUri" />
 						<a asp-validation-for="DefaultIconUri" class="ui basic red pointing prompt label"></a>
-						<div class="ui message">如果成就没有设定图标，则此处的图标将作为默认图标展示在成就获取和展示页面。</div>
+						<div class="ui message">如果成就和分类都没有设定图标，则此处的图标将作为默认图标展示在成就获取和展示页面。</div>
+					</div>
+					
+					<div class="field" asp-for="DefaultGrayedIconUri">
+						<label asp-for="DefaultGrayedIconUri">默认成就图标灰色版</label>
+						<input type="url" asp-for="DefaultGrayedIconUri" />
+						<a asp-validation-for="DefaultGrayedIconUri" class="ui basic red pointing prompt label"></a>
+						<div class="ui message">默认成就图标的灰色版本。在成就未获得时，将会使用这个版本。如果你不提供灰色版图标，则系统将对常规图标应用灰度效果以产生灰色效果，但这种方法产生的灰色图标可能存在对比度不强等问题，因此建议你最好为图标专门设计灰色版本。</div>
 					</div>
 
 					<div class="ui divider"></div>

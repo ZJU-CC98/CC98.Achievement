@@ -1,5 +1,4 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
-@using Sakura.AspNetCore.Mvc.Internal
 @model IPagedList<AchievementAndUserRecordInfo>
 @inject IViewLocalizer Localizer
 @{
@@ -12,13 +11,13 @@
 <partial name="_UserSearchPartial" model="@search" />
 <div class="ui divider"></div>
 
+@if (!string.IsNullOrEmpty(search.Keyword))
+{
+	<div class="ui warning message">当你对成就名称进行筛选时，列表中将不会包含任何你当前未解锁的隐藏或特殊成就。</div>
+}
+
 @if (Model.Any())
 {
-	@if (!string.IsNullOrEmpty(search.Keyword))
-	{
-		<div class="ui warning message">当你对成就名称进行筛选时，列表中将不会包含任何你当前未解锁的隐藏或特殊成就。</div>
-	}
-
 	<div class="ui three stackable raised cards">
 		@foreach (var item in Model)
 		{

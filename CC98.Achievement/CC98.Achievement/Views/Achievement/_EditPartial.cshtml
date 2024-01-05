@@ -53,6 +53,13 @@
 		<a asp-validation-for="IconUri" class="ui basic red pointing prompt label"></a>
 		<div class="ui message">该成就的图标。用户可以在成就系统界面中看到该图标。如果不使用图标，则该成就将使用系统提供的默认图标。从用户体验角度而言，建议你为每个成就都提供辨识度高的图标。</div>
 	</div>
+	
+	<div class="field" asp-for="GrayedIconUri">
+		<label asp-for="GrayedIconUri">成就图标灰色版</label>
+		<input asp-for="GrayedIconUri" type="url" placeholder="使用默认图标" />
+		<a asp-validation-for="GrayedIconUri" class="ui basic red pointing prompt label"></a>
+		<div class="ui message">该成就图标的灰色版本。在成就未获得时，将会使用这个版本。如果你不提供灰色版图标，则系统将对常规图标应用灰度效果以产生灰色效果，但这种方法产生的灰色图标可能存在对比度不强等问题，因此建议你最好为每个图标专门设计灰色版本。</div>
+	</div>
 
 	<div class="field" asp-for="SortOrder">
 		<label asp-for="SortOrder">排序值</label>
