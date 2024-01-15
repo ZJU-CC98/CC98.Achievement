@@ -92,7 +92,7 @@
 									</td>
 									<td>
 										<div class="ui mini buttons">
-											<button type="button" class="ui button" data-toggle="remote-dialog" data-target="#add-record-modal" data-remote-url="@Url.Action("EditRecord", "Achievement", new {record.CategoryName, record.AchievementName, record.UserName})">编辑</button>
+											<button type="button" class="ui button" data-toggle="remote-dialog" data-target="#add-record-modal" data-remote-url="@Url.Action("EditRecord", "Achievement", new { record.CategoryName, CodeName = record.AchievementName, record.UserName })">编辑</button>
 											<button type="button" class="ui negative button" onclick="onDelete(this);">删除</button>
 										</div>
 									</td>
@@ -131,52 +131,50 @@
 
 <authorize policy="@Policies.Review">
 
-	<form asp-controller="Achievement" asp-action="DeleteRecord" method="post" asp-antiforgery="true">
+	<form class="ui small modal" tabindex="-1" id="delete-record-modal" asp-controller="Achievement" asp-action="DeleteRecord" method="post" asp-antiforgery="true">
+
 
 		<input type="hidden" asp-for="CategoryName" />
 		<input type="hidden" asp-for="CodeName" />
 		<input type="hidden" name="userName" id="delete-user-name-input" />
 
-		<div class="ui small modal" tabindex="-1" id="delete-record-modal">
-			<i class="close icon"></i>
-			<div class="header">删除成就记录警告</div>
-			<div class="content">
-				<p>你确定要删除用户<q><storng id="delete-user-name-text"></storng></q>的成就记录吗？此操作不可恢复。如果该成就具有进度值，删除记录时也会将其清空。</p>
+		<i class="close icon"></i>
+		<div class="header">删除成就记录警告</div>
+		<div class="content">
 
-				<p>
-					如果负责颁发该成就的应用完整记录了用户先前活动数据且定期批量更新成就数据，则用户的成就状态可能会在短时间后自动恢复到删除前的状态，删除成就记录可能无法达到预期效果。在执行该操作前，请联系首先联系应用作者确定成就的更新模式。
-				</p>
+			<p>你确定要删除用户<q><storng id="delete-user-name-text"></storng></q>的成就记录吗？此操作不可恢复。如果该成就具有进度值，删除记录时也会将其清空。</p>
 
-				<p>如果确定执行该操作，请单击<q>删除记录</q>按钮。否则，请关闭关闭对话框或点击对话框外的任意区域。</p>
-			</div>
-			<div class="actions">
-				<button type="submit" class="ui negative button">删除记录</button>
-				<button type="button" class="ui button" data-dismiss="modal">关闭</button>
-			</div>
+			<p>
+				如果负责颁发该成就的应用完整记录了用户先前活动数据且定期批量更新成就数据，则用户的成就状态可能会在短时间后自动恢复到删除前的状态，删除成就记录可能无法达到预期效果。在执行该操作前，请联系首先联系应用作者确定成就的更新模式。
+			</p>
 
+			<p>如果确定执行该操作，请单击<q>删除记录</q>按钮。否则，请关闭关闭对话框或点击对话框外的任意区域。</p>
+		</div>
+		<div class="actions">
+			<button type="submit" class="ui negative button">删除记录</button>
+			<button type="button" class="ui button" data-dismiss="modal">关闭</button>
 		</div>
 	</form>
 
-	<form asp-controller="Achievement" asp-action="ClearRecords" asp-route-categoryName="@Model.CategoryName" asp-route-codeName="@Model.CodeName" method="post" asp-antiforgery="true">
 
-		<div class="ui small modal" tabindex="-1" id="clear-record-modal">
-			<i class="close icon"></i>
-			<div class="header">清空成就记录警告</div>
-			<div class="content">
-				<p>你确定要清空这个成就的所有获得记录吗？这个操作不可撤销。</p>
+	<form class="ui small modal" tabindex="-1" id="clear-record-modal" asp-controller="Achievement" asp-action="ClearRecords" asp-route-categoryName="@Model.CategoryName" asp-route-codeName="@Model.CodeName" method="post" asp-antiforgery="true">
 
-				<p>
-					如果负责颁发该成就的应用完整记录了每个用户先前活动数据且定期批量更新成就数据，则他们的成就状态可能会在短时间后自动恢复到删除前的状态，删除成就记录可能无法达到预期效果。在执行该操作前，请联系首先联系应用作者确定成就的更新模式。
-				</p>
+		<i class="close icon"></i>
+		<div class="header">清空成就记录警告</div>
+		<div class="content">
+			<p>你确定要清空这个成就的所有获得记录吗？这个操作不可撤销。</p>
 
-				<p>第三方应用自身也具有清空应用成就记录的相关权限。如果是因为应用自身对成就的设定产生变化导致先前的成就记录不再有效，请建议应用作者首先尝试通过自身权限清空成就记录。人工清理成就信息只能作为一种应用自身功能不完整时的备用方案，不应随意使用。</p>
+			<p>
+				如果负责颁发该成就的应用完整记录了每个用户先前活动数据且定期批量更新成就数据，则他们的成就状态可能会在短时间后自动恢复到删除前的状态，删除成就记录可能无法达到预期效果。在执行该操作前，请联系首先联系应用作者确定成就的更新模式。
+			</p>
 
-				<p>如果确定执行该操作，请单击<q>删除记录</q>按钮。否则，请关闭关闭对话框或点击对话框外的任意区域。</p>
-			</div>
-			<div class="actions">
-				<button type="submit" class="ui negative button">删除记录</button>
-				<button type="button" class="ui button" data-dismiss="modal">关闭</button>
-			</div>
+			<p>第三方应用自身也具有清空应用成就记录的相关权限。如果是因为应用自身对成就的设定产生变化导致先前的成就记录不再有效，请建议应用作者首先尝试通过自身权限清空成就记录。人工清理成就信息只能作为一种应用自身功能不完整时的备用方案，不应随意使用。</p>
+
+			<p>如果确定执行该操作，请单击<q>删除记录</q>按钮。否则，请关闭关闭对话框或点击对话框外的任意区域。</p>
+		</div>
+		<div class="actions">
+			<button type="submit" class="ui negative button">删除记录</button>
+			<button type="button" class="ui button" data-dismiss="modal">关闭</button>
 		</div>
 
 	</form>
@@ -187,7 +185,7 @@
 
 
 @section Scripts
-	{
+{
 	<script asp-authorize-policy="@Policies.Review">
 
 
@@ -208,4 +206,4 @@
 
 	</script>
 
-	}
+}

@@ -562,16 +562,16 @@ public partial class AchievementController(AchievementDbContext dbContext, IOper
 	/// <summary>
 	/// 显示编辑成就记录页面。
 	/// </summary>
-	/// <param name="category">成就分类名称。</param>
-	/// <param name="name">成就名称。</param>
+	/// <param name="categoryName">成就分类名称。</param>
+	/// <param name="codeName">成就名称。</param>
 	/// <param name="userName">用户名。</param>
 	/// <param name="cancellationToken">用于取消操作的令牌。</param>
 	/// <returns>表示异步操作的任务。操作结果为响应。</returns>
 	[HttpGet]
 	[Authorize(Policies.Review)]
-	public async Task<IActionResult> EditRecord(string category, string name, string userName, CancellationToken cancellationToken)
+	public async Task<IActionResult> EditRecord(string categoryName, string codeName, string userName, CancellationToken cancellationToken)
 	{
-		var item = await dbContext.Records.FindAsync([category, name, userName], cancellationToken);
+		var item = await dbContext.Records.FindAsync([categoryName, codeName, userName], cancellationToken);
 
 		if (item == null)
 		{
@@ -616,8 +616,8 @@ public partial class AchievementController(AchievementDbContext dbContext, IOper
 	/// <summary>
 	/// 删除用户的成就记录。
 	/// </summary>
-	/// <param name="category">成就分类名称。</param>
-	/// <param name="name">成就名称。</param>
+	/// <param name="categoryName">成就分类名称。</param>
+	/// <param name="codeName">成就名称。</param>
 	/// <param name="userName">用户名。</param>
 	/// <param name="cancellationToken">用于取消操作的令牌。</param>
 	/// <returns>表示异步操作的任务。</returns>
@@ -625,10 +625,10 @@ public partial class AchievementController(AchievementDbContext dbContext, IOper
 	[ValidateAntiForgeryToken]
 	[Authorize(Policies.Review)]
 
-	public async Task<IActionResult> DeleteRecord(string category, string name, string userName,
+	public async Task<IActionResult> DeleteRecord(string categoryName, string codeName, string userName,
 		CancellationToken cancellationToken)
 	{
-		var item = await dbContext.Records.FindAsync([category, name, userName], cancellationToken);
+		var item = await dbContext.Records.FindAsync([categoryName, codeName, userName], cancellationToken);
 
 		if (item == null)
 		{
@@ -640,7 +640,7 @@ public partial class AchievementController(AchievementDbContext dbContext, IOper
 		try
 		{
 			await dbContext.SaveChangesAsync(cancellationToken);
-			return RedirectToAction("Edit", "Achievement", new { id = category });
+			return RedirectToAction("Edit", "Achievement", new { category = categoryName, name = codeName });
 		}
 		catch (DbUpdateException ex)
 		{
