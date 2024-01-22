@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace CC98.Achievement;
@@ -6,7 +7,7 @@ namespace CC98.Achievement;
 /// <summary>
 /// 为数据库和操纵 API 对象提供公用基础类型。
 /// </summary>
-public abstract class AchievementBaseInfo
+public abstract class AchievementBaseInfo : ICloneable
 {
 	/// <summary>
 	/// 成就的代码名称。该字段用于在其他 API 中标识该成就。成就的代码名称设定后将无法修改。
@@ -67,4 +68,16 @@ public abstract class AchievementBaseInfo
 	/// 注意：这个属性不影响 API 操作。定义成就的应用始终可以通过 API 直接移除用户已经获得的成就。这个信息仅用于提示用户的获得风险。
 	/// </remarks>
 	public bool IsDynamic { get; set; }
+
+	/// <summary>
+	/// 创建该对象的副本。
+	/// </summary>
+	/// <returns>该对象的副本。</returns>
+	public virtual AchievementBaseInfo Clone()
+	{
+		return (AchievementBaseInfo)MemberwiseClone();
+	}
+
+	/// <inheritdoc />
+	object ICloneable.Clone() => Clone();
 }

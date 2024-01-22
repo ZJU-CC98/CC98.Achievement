@@ -120,7 +120,8 @@
 	/// </summary>
 	/// <param name="item">要显示的成就项目。</param>
 	/// <param name="category">成就项目对应的分类。</param>
-	/// <param name="isHidden">该项目是否隐藏</param>
+	/// <param name="isHidden">该项目是否隐藏。</param>
+	/// <param name="isCompleted">该项目是否已完成。</param>
 	/// <returns>实际显示项目的 URL，以及是否需要灰色显示图案。</returns>
 	private (string? Url, bool ShouldGrayedOut) GetRealIconUri(AchievementItem item, AchievementCategory category, bool isHidden, bool isCompleted)
 	{

@@ -6,10 +6,15 @@
 	ViewBag.Title = Localizer.Html.Title(Model.Item.DisplayName);
 }
 
-@if (!string.IsNullOrEmpty(Model.Item.Description))
-{
-	<p>@Model.Item.Description</p>
-}
+<div class="ui centered card">
+	<div class="image">
+		<img alt="成就图标" src="@Model.Item.IconUri" />
+	</div>
+	<div class="content">
+		<div class="description">@Model.Item.Description</div>
+	</div>
+</div>
+
 
 <div class="ui styled fluid accordion">
 

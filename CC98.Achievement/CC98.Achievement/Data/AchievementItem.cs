@@ -34,4 +34,10 @@ public class AchievementItem : AchievementBaseInfo
 	/// </summary>
 	[InverseProperty(nameof(AchievementRecord.Achievement))]
 	public virtual ICollection<AchievementRecord> Records { get; set; } = new Collection<AchievementRecord>();
+
+	/// <inheritdoc />
+	public override AchievementItem Clone()
+	{
+		return (AchievementItem)base.Clone();
+	}
 }

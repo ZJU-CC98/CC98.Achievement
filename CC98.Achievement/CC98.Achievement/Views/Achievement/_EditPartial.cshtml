@@ -22,7 +22,7 @@
 		<label asp-for="CodeName">成就标识</label>
 		<input type="text" asp-for="CodeName" readonly="@isEdit" disabled="@isEdit" />
 		<a asp-validation-for="CodeName" class="ui basic red pointing prompt label"></a>
-		<div class="ui message">该成就项的标识。第三方应用推送成就信息时，将使用该字段标识本成就。用户通常不会看到标识内容。处于兼容和规范性考虑，建议使用英文字母、数字和横线来定义标识。</div>
+		<div class="ui message">该成就项的标识。第三方应用推送成就信息时，将使用该字段标识本成就。用户通常不会看到标识内容。出于兼容和规范性考虑，建议使用英文字母、数字和横线来定义标识。</div>
 	</div>
 
 	@if (isEdit)

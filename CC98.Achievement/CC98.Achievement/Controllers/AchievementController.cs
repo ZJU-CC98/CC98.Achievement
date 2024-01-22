@@ -448,7 +448,11 @@ public partial class AchievementController(AchievementDbContext dbContext, IOper
 		var dataProtector = dataProtectionProvider.CreateProtector(nameof(AchievementDbContext), category.ToLowerInvariant());
 		var realName = dataProtector.Unprotect(name);
 
-		var item = await dbContext.Items.FindAsync([category, realName], cancellationToken);
+		var item = await (from i in dbContext.Items.AsNoTracking()
+						  where i.CategoryName == category && i.CodeName == realName
+						  select i)
+			.Include(p => p.Category)
+			.SingleOrDefaultAsync(cancellationToken);
 
 		if (item == null)
 		{
@@ -468,7 +472,8 @@ public partial class AchievementController(AchievementDbContext dbContext, IOper
 		{
 			myRecord =
 				await (from i in dbContext.Records
-					where i.UserName == myName && i.CategoryName == item.CategoryName && i.AchievementName == item.CodeName select i).SingleOrDefaultAsync(cancellationToken);
+					   where i.UserName == myName && i.CategoryName == item.CategoryName && i.AchievementName == item.CodeName
+					   select i).SingleOrDefaultAsync(cancellationToken);
 		}
 
 		// 是否已完成
@@ -483,10 +488,10 @@ public partial class AchievementController(AchievementDbContext dbContext, IOper
 		// 未获得的隐藏成就，替换为隐藏内容
 		if (item.State == AchievementState.Hidden && !isCompleted)
 		{
-			item = systemSettingService.Current.HiddenItemTemplate;
+			item = systemSettingService.Current.GetHiddenTemplateForCategory(item.Category);
 		}
 
-		
+
 		var userRecords =
 			await (from r in dbContext.Records
 				   join u in dbContext.Users

@@ -32,6 +32,23 @@ public class SystemSetting : IAppSettingWithDefaultValue<SystemSetting>
 	public AchievementItem HiddenItemTemplate { get; set; } = new();
 
 	/// <summary>
+	/// 为 <see cref="HiddenItemTemplate"/> 创建特定于分类的模板。
+	/// </summary>
+	/// <param name="category">要关联到的分类。</param>
+	/// <returns>一个 <see cref="AchievementItem"/> 对象，其中主要内容来自于 <see cref="HiddenItemTemplate"/>，但 <see cref="AchievementItem.Category"/> 属性来自于 <paramref name="category"/> 参数。</returns>
+	public AchievementItem GetHiddenTemplateForCategory(AchievementCategory category)
+	{
+		var result = HiddenItemTemplate.Clone();
+		result.Category = category;
+		result.CategoryName = category.CodeName;
+
+		// 替换为隐藏图标
+		result.IconUri = category.DefaultHideIconUri;
+
+		return result;
+	}
+
+	/// <summary>
 	/// 隐藏成就的显示部分。
 	/// </summary>
 	public AchievementItemParts HiddenDisplayParts { get; set; } = AchievementItemParts.None;
