@@ -161,7 +161,17 @@ public class AchievementController(AchievementDbContext dbContext) : ControllerB
 
 		try
 		{
-			await dbContext.BulkInsertOrUpdateAsync(updatedItems.ToArray(), cancellationToken: cancellationToken);
+			var config = new BulkConfig();
+
+			
+			if (!info.ForceOverride)
+			{
+				// 更新覆盖条件：
+				// 原有成就未完成，且无任何进度，或者进度小于当前进度
+				config.OnConflictUpdateWhereSql = (oldValue, newValue) => $"(NOT {oldValue}.[IsCompleted]) AND ({oldValue}.[CurrentValue] IS NULL OR {oldValue}.[CurrentValue] < {newValue}.[CurrentValue])";
+			}
+
+			await dbContext.BulkInsertOrUpdateAsync(updatedItems.ToArray(), bulkConfig: config, cancellationToken: cancellationToken);
 			await dbContext.BulkSaveChangesAsync(cancellationToken: cancellationToken);
 			return NoContent();
 		}
