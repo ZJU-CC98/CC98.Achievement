@@ -13,7 +13,6 @@ public class User
 	/// 用户的标识。
 	/// </summary>
 	[Key]
-	[Column("UserId")]
 	public int Id { get; set; }
 
 	/// <summary>
@@ -21,22 +20,19 @@ public class User
 	/// </summary>
 	[Required]
 	[StringLength(50)]
-	[Column("UserName")]
 	public required string Name { get; set; }
 
 	/// <summary>
 	/// 用户的头像 URL 地址。
 	/// </summary>
-	[Column("face")]
 	[Required]
 	[Url]
-	public required string PortraitUri { get; set; }
+	public required string PortraitUrl { get; set; }
 
 	/// <summary>
 	/// 用户的性别。
 	/// </summary>
 
-	[Column("Sex")]
 	[Required]
 	public Gender Gender { get; set; }
 }
