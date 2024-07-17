@@ -168,7 +168,7 @@ public class AchievementController(AchievementDbContext dbContext) : ControllerB
 			{
 				// 更新覆盖条件：
 				// 原有成就未完成，且无任何进度，或者进度小于当前进度
-				config.OnConflictUpdateWhereSql = (oldValue, newValue) => $"(NOT {oldValue}.[IsCompleted]) AND ({oldValue}.[CurrentValue] IS NULL OR {oldValue}.[CurrentValue] < {newValue}.[CurrentValue])";
+				config.OnConflictUpdateWhereSql = (oldValue, newValue) => $"({oldValue}.[IsCompleted] = 0) AND ({oldValue}.[CurrentValue] IS NULL OR {oldValue}.[CurrentValue] < {newValue}.[CurrentValue])";
 			}
 
 			await dbContext.BulkInsertOrUpdateAsync(updatedItems.ToArray(), bulkConfig: config, cancellationToken: cancellationToken);
