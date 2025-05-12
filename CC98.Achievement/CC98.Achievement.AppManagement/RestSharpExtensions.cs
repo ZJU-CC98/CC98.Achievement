@@ -1,11 +1,10 @@
-﻿using RestSharp;
-
-using System;
+﻿using System;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using RestSharp;
 
-namespace CC98.Achievement.AppManagement;
+namespace CC98.Achievement;
 
 public static class RestSharpExtensions
 {

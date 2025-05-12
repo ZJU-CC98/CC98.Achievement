@@ -1,4 +1,4 @@
-﻿namespace CC98.Achievement.AppManagement;
+﻿namespace CC98.Achievement;
 
 /// <summary>
 /// 为 <see cref="AchievementService"/> 提供配置选项。

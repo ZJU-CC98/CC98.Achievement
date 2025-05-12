@@ -1,16 +1,14 @@
-﻿using IdentityModel.Client;
-
-using RestSharp;
-using RestSharp.Authenticators.OAuth2;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Duende.IdentityModel.Client;
 using JetBrains.Annotations;
+using RestSharp;
+using RestSharp.Authenticators.OAuth2;
 
-namespace CC98.Achievement.AppManagement;
+namespace CC98.Achievement;
 
 /// <summary>
 /// 提供成就的相关管理服务。

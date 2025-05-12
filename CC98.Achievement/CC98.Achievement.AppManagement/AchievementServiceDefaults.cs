@@ -1,4 +1,4 @@
-﻿namespace CC98.Achievement.AppManagement;
+﻿namespace CC98.Achievement;
 
 /// <summary>
 /// 为 <see cref="AchievementRegisterOptions"/> 提供默认值。该类型为静态类型。
