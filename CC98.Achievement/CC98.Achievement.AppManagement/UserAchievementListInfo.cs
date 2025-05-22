@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CC98.Achievement;
+﻿namespace CC98.Achievement;
 
 /// <summary>
 /// 表示单个用户的一个或多个成就的信息。
