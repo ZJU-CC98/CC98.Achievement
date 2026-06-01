@@ -5,8 +5,8 @@
 /// </summary>
 public static class AchievementScopes
 {
-	/// <summary>
-	/// 允许向成就系统推送成就相关信息。该字段为常量。
-	/// </summary>
-	public const string PushAchievement = "cc98-achievement.push-achievement";
+    /// <summary>
+    /// 允许向成就系统推送成就相关信息。该字段为常量。
+    /// </summary>
+    public const string PushAchievement = "cc98-achievement.push-achievement";
 }
